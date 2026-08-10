@@ -10,7 +10,6 @@ const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
     { id: 'home', label: '홈' },
     { id: 'services', label: '서비스 안내' },
     { id: 'portfolio', label: '포트폴리오' },
-    { id: 'ebooks', label: 'E북(도록)' },
     { id: 'equipment', label: '보유 장비' },
     { id: 'contact', label: '오시는 길' }
   ];

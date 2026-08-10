@@ -23,7 +23,6 @@ function App() {
         {activeTab === 'home' && <Home setActiveTab={setActiveTab} />}
         {activeTab === 'services' && <Services />}
         {activeTab === 'portfolio' && <Portfolio />}
-        {activeTab === 'ebooks' && <Ebooks />}
         {activeTab === 'equipment' && <Equipment />}
         {activeTab === 'contact' && <Contact />}
       </main>

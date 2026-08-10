@@ -237,9 +237,20 @@ export default function EbookManager() {
                   <div className="p-4 flex-1 flex flex-col">
                     <h4 className="font-bold text-lg text-gray-900 mb-1 truncate">{item.title}</h4>
                     <p className="text-sm text-gray-500 mb-3 truncate">{item.author || '작가 미상'}</p>
-                    <div className="mt-auto flex justify-between items-center text-xs text-gray-400">
-                      <span>👀 조회수 {item.views}회</span>
-                      <a href={`/viewer/${item.id}`} target="_blank" rel="noreferrer" className="text-blue-500 font-bold hover:underline bg-blue-50 px-2 py-1 rounded">뷰어 열기 ↗</a>
+                    <div className="mt-auto flex flex-col gap-2">
+                      <button 
+                        onClick={() => {
+                          navigator.clipboard.writeText(`${window.location.origin}/viewer/${item.id}`);
+                          alert('개인 링크가 복사되었습니다! 고객에게 전달하세요.');
+                        }}
+                        className="w-full bg-blue-50 text-blue-600 border border-blue-200 py-2 rounded text-sm font-bold hover:bg-blue-100 transition-colors"
+                      >
+                        🔗 고객 전달용 링크 복사
+                      </button>
+                      <div className="flex justify-between items-center text-xs text-gray-400 mt-1">
+                        <span>👀 조회수 {item.views}회</span>
+                        <a href={`/viewer/${item.id}`} target="_blank" rel="noreferrer" className="text-gray-500 hover:underline">내가 미리보기 ↗</a>
+                      </div>
                     </div>
                   </div>
                 </div>
