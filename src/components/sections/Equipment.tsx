@@ -6,7 +6,7 @@ const Equipment = () => {
                 <div className="text-center mb-20"><h2 className="text-4xl font-black text-navy-900">전문 보유 장비</h2><p className="text-gray-400 mt-4">최고의 디자인 결과물을 구현하기 위한 소나무디자인의 핵심 설비입니다.</p></div>
                 
                 <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
-                    <div className="w-full md:w-1/2 h-[400px] rounded-[3rem] overflow-hidden shadow-2xl bg-gray-200"><div className="w-full h-full bg-gray-300 flex items-center justify-center">Digital Print</div></div>
+                    <div className="w-full md:w-1/2 h-[400px] rounded-2xl overflow-hidden shadow-2xl bg-gray-200"><div className="w-full h-full bg-gray-300 flex items-center justify-center">Digital Print</div></div>
                     <div className="w-full md:w-1/2 space-y-6">
                         <span className="text-blue-600 font-mont font-extrabold tracking-widest text-sm uppercase">Printing Line</span>
                         <h3 className="text-3xl font-black text-navy-900">디지털 인쇄 라인</h3>
@@ -20,7 +20,7 @@ const Equipment = () => {
                 </div>
 
                 <div className="flex flex-col md:flex-row-reverse items-center gap-12 lg:gap-20 text-right">
-                    <div className="w-full md:w-1/2 h-[400px] rounded-[3rem] overflow-hidden shadow-2xl bg-gray-200"><div className="w-full h-full bg-gray-300 flex items-center justify-center">Large Format</div></div>
+                    <div className="w-full md:w-1/2 h-[400px] rounded-2xl overflow-hidden shadow-2xl bg-gray-200"><div className="w-full h-full bg-gray-300 flex items-center justify-center">Large Format</div></div>
                     <div className="w-full md:w-1/2 space-y-6 flex flex-col items-end">
                         <span className="text-blue-600 font-mont font-extrabold tracking-widest text-sm uppercase">Visual Output</span>
                         <h3 className="text-3xl font-black text-navy-900">실사 출력 라인</h3>
@@ -32,7 +32,7 @@ const Equipment = () => {
                     </div>
                 </div>
                 <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
-                    <div className="w-full md:w-1/2 h-[400px] rounded-[3rem] overflow-hidden shadow-2xl bg-gray-200"><div className="w-full h-full bg-gray-300 flex items-center justify-center">Finishing</div></div>
+                    <div className="w-full md:w-1/2 h-[400px] rounded-2xl overflow-hidden shadow-2xl bg-gray-200"><div className="w-full h-full bg-gray-300 flex items-center justify-center">Finishing</div></div>
                     <div className="w-full md:w-1/2 space-y-6">
                         <span className="text-blue-600 font-mont font-extrabold tracking-widest text-sm uppercase">Finishing Line</span>
                         <h3 className="text-3xl font-black text-navy-900">논스톱 후가공 라인</h3>

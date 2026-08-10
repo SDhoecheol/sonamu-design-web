@@ -6,7 +6,6 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
-  const isToolActive = ['yieldcalc', 'calculator', 'harikomi', 'qrcode'].includes(activeTab);
 
   return (
     <header className="w-full bg-navy-900 text-white shadow-lg sticky top-0 z-50">
@@ -56,41 +55,6 @@ const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
               >
                 오시는 길
               </button>
-            </li>
-            <li className="relative group">
-              <button 
-                className={`px-2 py-1 flex items-center gap-1 transition-colors group-hover:text-white ${isToolActive ? 'text-white font-bold border-b-2 border-blue-500' : 'text-gray-400'}`}
-              >
-                작업 도구 <span className="material-symbols-outlined text-sm transition-transform group-hover:rotate-180">expand_more</span>
-              </button>
-              <div className="absolute left-1/2 -translate-x-1/2 top-full pt-4 hidden group-hover:block z-50">
-                <div className="bg-white rounded-xl shadow-xl border border-gray-100 py-2 w-36 flex flex-col overflow-hidden">
-                  <button 
-                    onClick={() => setActiveTab('yieldcalc')} 
-                    className={`w-full py-2.5 px-4 text-sm font-medium transition-colors text-center hover:bg-slate-50 hover:text-blue-600 ${activeTab === 'yieldcalc' ? 'text-blue-600 bg-slate-50' : 'text-slate-600'}`}
-                  >
-                    절수/연수 계산
-                  </button>
-                  <button 
-                    onClick={() => setActiveTab('calculator')} 
-                    className={`w-full py-2.5 px-4 text-sm font-medium transition-colors text-center hover:bg-slate-50 hover:text-blue-600 ${activeTab === 'calculator' ? 'text-blue-600 bg-slate-50' : 'text-slate-600'}`}
-                  >
-                    세네카 계산
-                  </button>
-                  <button 
-                    onClick={() => setActiveTab('harikomi')} 
-                    className={`w-full py-2.5 px-4 text-sm font-medium transition-colors text-center hover:bg-slate-50 hover:text-blue-600 ${activeTab === 'harikomi' ? 'text-blue-600 bg-slate-50' : 'text-slate-600'}`}
-                  >
-                    하리꼬미
-                  </button>
-                  <button 
-                    onClick={() => setActiveTab('qrcode')} 
-                    className={`w-full py-2.5 px-4 text-sm font-medium transition-colors text-center hover:bg-slate-50 hover:text-blue-600 ${activeTab === 'qrcode' ? 'text-blue-600 bg-slate-50' : 'text-slate-600'}`}
-                  >
-                    QR 제작
-                  </button>
-                </div>
-              </div>
             </li>
           </ul>
         </nav>

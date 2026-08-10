@@ -6,10 +6,6 @@ import Services from './components/sections/Services';
 import Portfolio from './components/sections/Portfolio';
 import Equipment from './components/sections/Equipment';
 import Contact from './components/sections/Contact';
-import YieldCalc from './components/tools/YieldCalc';
-import SenecaCalc from './components/tools/SenecaCalc';
-import Harikomi from './components/tools/Harikomi';
-import QrGenerator from './components/tools/QrGenerator';
 
 function App() {
   const [activeTab, setActiveTab] = useState('home');
@@ -23,17 +19,11 @@ function App() {
     <>
       <Header activeTab={activeTab} setActiveTab={setActiveTab} />
       <main>
-        {activeTab === 'home' && <Home />}
+        {activeTab === 'home' && <Home setActiveTab={setActiveTab} />}
         {activeTab === 'services' && <Services />}
         {activeTab === 'portfolio' && <Portfolio />}
         {activeTab === 'equipment' && <Equipment />}
         {activeTab === 'contact' && <Contact />}
-        
-        {/* Tools */}
-        {activeTab === 'yieldcalc' && <YieldCalc />}
-        {activeTab === 'calculator' && <SenecaCalc />}
-        {activeTab === 'harikomi' && <Harikomi />}
-        {activeTab === 'qrcode' && <QrGenerator />}
       </main>
       
       <footer className="w-full bg-navy-900 text-white py-14 text-center">
