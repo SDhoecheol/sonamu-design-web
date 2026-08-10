@@ -64,6 +64,11 @@ const Contact = () => {
                      </div>
                     <div className="lg:col-span-3 min-h-[530px] rounded-2xl shadow-xl overflow-hidden border border-gray-100"><div id="map" className="w-full h-full bg-gray-200"></div></div>
                 </div>
+                
+                {/* 관리자 페이지 접속 (숨김 링크) */}
+                <div className="text-center mt-12">
+                    <a href="/sd-master" className="text-[10px] text-gray-300 hover:text-gray-400 opacity-30 transition-opacity">Admin Portal</a>
+                </div>
             </div>
         </section>
   );

@@ -6,6 +6,14 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
+  const menuItems = [
+    { id: 'home', label: '홈' },
+    { id: 'services', label: '서비스 안내' },
+    { id: 'portfolio', label: '포트폴리오' },
+    { id: 'ebooks', label: 'E북(도록)' },
+    { id: 'equipment', label: '보유 장비' },
+    { id: 'contact', label: '오시는 길' }
+  ];
 
   return (
     <header className="w-full bg-navy-900 text-white shadow-lg sticky top-0 z-50">
@@ -16,46 +24,16 @@ const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
         </div>
         <nav>
           <ul className="flex flex-wrap justify-center items-center gap-4 md:gap-10">
-            <li>
-              <button 
-                onClick={() => setActiveTab('home')} 
-                className={`px-2 py-1 transition-colors ${activeTab === 'home' ? 'text-white font-bold border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}`}
-              >
-                홈
-              </button>
-            </li>
-            <li>
-              <button 
-                onClick={() => setActiveTab('services')} 
-                className={`px-2 py-1 transition-colors ${activeTab === 'services' ? 'text-white font-bold border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}`}
-              >
-                서비스 안내
-              </button>
-            </li>
-            <li>
-              <button 
-                onClick={() => setActiveTab('portfolio')} 
-                className={`px-2 py-1 transition-colors ${activeTab === 'portfolio' ? 'text-white font-bold border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}`}
-              >
-                포트폴리오
-              </button>
-            </li>
-            <li>
-              <button 
-                onClick={() => setActiveTab('equipment')} 
-                className={`px-2 py-1 transition-colors ${activeTab === 'equipment' ? 'text-white font-bold border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}`}
-              >
-                보유 장비
-              </button>
-            </li>
-            <li>
-              <button 
-                onClick={() => setActiveTab('contact')} 
-                className={`px-2 py-1 transition-colors ${activeTab === 'contact' ? 'text-white font-bold border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}`}
-              >
-                오시는 길
-              </button>
-            </li>
+            {menuItems.map(item => (
+              <li key={item.id}>
+                <button 
+                  onClick={() => setActiveTab(item.id)} 
+                  className={`px-2 py-1 transition-colors ${activeTab === item.id ? 'text-white font-bold border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}`}
+                >
+                  {item.label}
+                </button>
+              </li>
+            ))}
           </ul>
         </nav>
       </div>

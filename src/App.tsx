@@ -4,6 +4,7 @@ import Header from './components/layout/Header';
 import Home from './components/sections/Home';
 import Services from './components/sections/Services';
 import Portfolio from './components/sections/Portfolio';
+import Ebooks from './components/sections/Ebooks';
 import Equipment from './components/sections/Equipment';
 import Contact from './components/sections/Contact';
 
@@ -22,6 +23,7 @@ function App() {
         {activeTab === 'home' && <Home setActiveTab={setActiveTab} />}
         {activeTab === 'services' && <Services />}
         {activeTab === 'portfolio' && <Portfolio />}
+        {activeTab === 'ebooks' && <Ebooks />}
         {activeTab === 'equipment' && <Equipment />}
         {activeTab === 'contact' && <Contact />}
       </main>
