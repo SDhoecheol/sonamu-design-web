@@ -15,7 +15,7 @@ export default function PortfolioManager() {
   const [file, setFile] = useState<File | null>(null);
 
   const fetchPortfolios = async () => {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('portfolios')
       .select('*')
       .order('created_at', { ascending: false });
@@ -58,7 +58,7 @@ export default function PortfolioManager() {
       // 1. 이미지 업로드
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const { data: uploadData, error: uploadError } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('portfolios')
         .upload(fileName, file);
 

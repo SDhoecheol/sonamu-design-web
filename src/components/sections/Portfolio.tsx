@@ -28,7 +28,7 @@ const Portfolio = () => {
 
   useEffect(() => {
     const fetchPortfolios = async () => {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('portfolios')
         .select('*')
         .order('created_at', { ascending: false });
