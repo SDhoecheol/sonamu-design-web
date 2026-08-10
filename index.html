@@ -5,6 +5,20 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>소나무디자인 - SONAMU DESIGN</title>
+    <script>
+      window.addEventListener('error', function(e) {
+        var errDiv = document.createElement('div');
+        errDiv.style.cssText = 'position:fixed;top:0;left:0;width:100%;background:red;color:white;z-index:999999;padding:20px;font-size:16px;overflow:auto;word-wrap:break-word;';
+        errDiv.innerText = 'Global Error: ' + e.message + '\\n' + (e.error && e.error.stack ? e.error.stack : '');
+        document.body.appendChild(errDiv);
+      });
+      window.addEventListener('unhandledrejection', function(e) {
+        var errDiv = document.createElement('div');
+        errDiv.style.cssText = 'position:fixed;top:50%;left:0;width:100%;background:orange;color:white;z-index:999999;padding:20px;font-size:16px;overflow:auto;word-wrap:break-word;';
+        errDiv.innerText = 'Promise Error: ' + (e.reason && e.reason.message ? e.reason.message : e.reason);
+        document.body.appendChild(errDiv);
+      });
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
     <script>
