@@ -11,8 +11,16 @@ export default function AdminLogin() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) setSession(session);
+      setSession(session);
     });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   if (session) {

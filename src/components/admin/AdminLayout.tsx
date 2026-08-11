@@ -1,4 +1,4 @@
-import { Outlet, Navigate } from 'react-router-dom';
+import { Outlet, Navigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import type { Session } from '@supabase/supabase-js';
@@ -6,6 +6,7 @@ import type { Session } from '@supabase/supabase-js';
 export default function AdminLayout() {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const location = useLocation();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -27,7 +28,7 @@ export default function AdminLayout() {
   }
 
   // 로그인 페이지가 아닌데 로그인이 안 되어 있다면 로그인 페이지로 리다이렉트
-  if (!session && window.location.pathname !== '/sd-master/login') {
+  if (!session && !location.pathname.includes('/sd-master/login')) {
     return <Navigate to="/sd-master/login" replace />;
   }
 
