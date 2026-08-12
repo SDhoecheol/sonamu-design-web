@@ -18,6 +18,9 @@ export default defineConfig({
               } else if (apiPath === '/api/s3-delete') {
                 const module = await import('./api/s3-delete.js');
                 await module.default(req, res);
+              } else if (apiPath === '/api/get-page-count') {
+                const module = await import('./api/get-page-count.js');
+                await module.default(req, res);
               } else if (apiPath === '/api/viewer') {
                 const module = await import('./api/viewer.js');
                 await module.default(req, res);

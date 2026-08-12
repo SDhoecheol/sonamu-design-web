@@ -27,33 +27,19 @@ export default function EbookViewerPage() {
         
         await supabase.from('ebooks').update({ views: (data.views || 0) + 1 }).eq('id', id);
 
-        // 총 페이지 수 파악 (book_config.js 로드)
+        // 총 페이지 수 파악 (CORS 우회를 위해 서버 백엔드 경유)
         try {
           const configUrl = data.viewer_url.replace('/index.html', '/files/search/book_config.js');
-          const res = await fetch(configUrl);
-          const text = await res.text();
-          // textForPages 배열의 길이를 찾아냄
-          const match = text.match(/var textForPages =\[(.*?)\];/s);
-          if (match) {
-            // JS 배열 구문을 안전하게 파싱하기 위해 쉼표 개수 + 1로 페이지 수 추정 (가장 안전한 방법)
-            // 요소가 비어있는 경우도 있으므로 eval 대신 문자열 분석 사용
-            const arrayContent = match[1];
-            // 문자열 내부의 이스케이프되지 않은 쉼표 개수를 세는 정규식
-            let pageCount = 1;
-            let inString = false;
-            for (let i = 0; i < arrayContent.length; i++) {
-              if (arrayContent[i] === '"' && (i === 0 || arrayContent[i-1] !== '\\')) {
-                inString = !inString;
-              }
-              if (arrayContent[i] === ',' && !inString) {
-                pageCount++;
-              }
+          const proxyRes = await fetch(`/api/get-page-count?configUrl=${encodeURIComponent(configUrl)}`);
+          if (proxyRes.ok) {
+            const result = await proxyRes.json();
+            if (result.totalPages) {
+              setTotalPages(result.totalPages);
+              console.log("Total pages detected:", result.totalPages);
             }
-            setTotalPages(pageCount);
-            console.log("Total pages detected:", pageCount);
           }
         } catch (e) {
-          console.error("Failed to load book config:", e);
+          console.error("Failed to load book config via proxy:", e);
         }
       } else {
         alert('E북을 찾을 수 없습니다.');
