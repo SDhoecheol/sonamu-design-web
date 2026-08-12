@@ -8,16 +8,27 @@ export default defineConfig({
     {
       name: 'api-mock',
       configureServer(server) {
-        server.middlewares.use((req, res, next) => {
+        server.middlewares.use(async (req, res, next) => {
           if (req.url && req.url.startsWith('/api/')) {
-            const apiName = req.url.split('?')[0].replace('/api/', ''); // 쿼리스트링 제거
-            import(`./api/${apiName}.js`).then(module => {
-              module.default(req, res);
-            }).catch(err => {
-              console.error(`API route ${apiName} not found or error:`, err);
+            const apiPath = req.url.split('?')[0];
+            try {
+              if (apiPath === '/api/s3-presign') {
+                const module = await import('./api/s3-presign.js');
+                await module.default(req, res);
+              } else if (apiPath === '/api/s3-delete') {
+                const module = await import('./api/s3-delete.js');
+                await module.default(req, res);
+              } else if (apiPath === '/api/viewer') {
+                const module = await import('./api/viewer.js');
+                await module.default(req, res);
+              } else {
+                next();
+              }
+            } catch (err) {
+              console.error(`API route ${apiPath} error:`, err);
               res.statusCode = 500;
               res.end(JSON.stringify({ error: 'Internal Server Error' }));
-            });
+            }
           } else {
             next();
           }
