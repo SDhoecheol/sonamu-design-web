@@ -13,15 +13,19 @@ export default defineConfig({
             const apiPath = req.url.split('?')[0];
             try {
               if (apiPath === '/api/s3-presign') {
+                // @ts-ignore
                 const module = await import('./api/s3-presign.js');
                 await module.default(req, res);
               } else if (apiPath === '/api/s3-delete') {
+                // @ts-ignore
                 const module = await import('./api/s3-delete.js');
                 await module.default(req, res);
               } else if (apiPath === '/api/get-page-count') {
+                // @ts-ignore
                 const module = await import('./api/get-page-count.js');
                 await module.default(req, res);
               } else if (apiPath === '/api/viewer') {
+                // @ts-ignore
                 const module = await import('./api/viewer.js');
                 await module.default(req, res);
               } else {
