@@ -10,20 +10,51 @@ export default function EbookViewerPage() {
   const [inputPassword, setInputPassword] = useState('');
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  
+  // 아웃트로 오버레이 관련 상태
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [showOutro, setShowOutro] = useState(false);
 
   useEffect(() => {
     const fetchEbook = async () => {
-      // NOTE: RLS 정책 상 익명 유저가 select 가능하다고 가정합니다.
       const { data } = await supabase.from('ebooks').select('viewer_url, password, title, thumbnail_url, views').eq('id', id).single();
       
       if (data && data.viewer_url) {
         setEbook(data);
         if (!data.password) {
-          setIsUnlocked(true); // 비밀번호 없으면 바로 통과
+          setIsUnlocked(true);
         }
         
-        // 조회수 1 증가 (간단한 클라이언트 사이드 카운트)
         await supabase.from('ebooks').update({ views: (data.views || 0) + 1 }).eq('id', id);
+
+        // 총 페이지 수 파악 (book_config.js 로드)
+        try {
+          const configUrl = data.viewer_url.replace('/index.html', '/files/search/book_config.js');
+          const res = await fetch(configUrl);
+          const text = await res.text();
+          // textForPages 배열의 길이를 찾아냄
+          const match = text.match(/var textForPages =\[(.*?)\];/s);
+          if (match) {
+            // JS 배열 구문을 안전하게 파싱하기 위해 쉼표 개수 + 1로 페이지 수 추정 (가장 안전한 방법)
+            // 요소가 비어있는 경우도 있으므로 eval 대신 문자열 분석 사용
+            const arrayContent = match[1];
+            // 문자열 내부의 이스케이프되지 않은 쉼표 개수를 세는 정규식
+            let pageCount = 1;
+            let inString = false;
+            for (let i = 0; i < arrayContent.length; i++) {
+              if (arrayContent[i] === '"' && (i === 0 || arrayContent[i-1] !== '\\')) {
+                inString = !inString;
+              }
+              if (arrayContent[i] === ',' && !inString) {
+                pageCount++;
+              }
+            }
+            setTotalPages(pageCount);
+            console.log("Total pages detected:", pageCount);
+          }
+        } catch (e) {
+          console.error("Failed to load book config:", e);
+        }
       } else {
         alert('E북을 찾을 수 없습니다.');
         navigate('/');
@@ -32,6 +63,24 @@ export default function EbookViewerPage() {
     };
     if (id) fetchEbook();
   }, [id, navigate]);
+
+  // 페이지 넘김 감지 리스너
+  useEffect(() => {
+    const handleMessage = (e: MessageEvent) => {
+      if (e.data && e.data.type === 'flip_page') {
+        const currentPage = parseInt(e.data.page, 10);
+        console.log("Flipped to page:", currentPage);
+        // 마지막 페이지 이상 도달 시 아웃트로 표시
+        if (totalPages > 0 && currentPage >= totalPages) {
+          setShowOutro(true);
+        } else {
+          setShowOutro(false);
+        }
+      }
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [totalPages]);
 
   const handleUnlock = (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,13 +144,44 @@ export default function EbookViewerPage() {
   }
 
   return (
-    <div className="w-full h-screen overflow-hidden bg-[#333333]">
+    <div className="w-full h-screen overflow-hidden bg-[#333333] relative relative-view">
       <iframe 
         src={ebook.viewer_url} 
         className="w-full h-full border-none block" 
         allowFullScreen 
         title={`${ebook.title} 뷰어`}
       />
+      
+      {/* 아웃트로 오버레이 */}
+      <div 
+        className={`absolute inset-0 z-50 flex items-center justify-center transition-all duration-700 ease-out ${
+          showOutro ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        <div className="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
+        <div 
+          className={`relative z-10 flex flex-col items-center transition-all duration-700 ease-out transform ${
+            showOutro ? 'translate-y-0 scale-100' : 'translate-y-8 scale-95'
+          }`}
+        >
+          <img 
+            src={ebook.thumbnail_url} 
+            alt="Cover" 
+            className="w-48 sm:w-64 h-auto shadow-2xl mb-8 rounded-sm" 
+          />
+          <p className="text-gray-200 text-base sm:text-lg font-light mb-10 tracking-wide text-center px-4">
+            본 E-Book 및 인쇄물은 소나무디자인에서 <span className="font-bold text-white">제작</span>하였습니다.
+          </p>
+          <a 
+            href="/" 
+            target="_blank" 
+            className="group flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-8 py-4 rounded-full transition-all backdrop-blur-md cursor-pointer"
+          >
+            <span className="font-medium">다른 작업물 둘러보기</span>
+            <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+          </a>
+        </div>
+      </div>
     </div>
   );
 }

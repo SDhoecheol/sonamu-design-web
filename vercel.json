@@ -2,6 +2,10 @@
   "cleanUrls": true,
   "rewrites": [
     {
+      "source": "/viewer/:id",
+      "destination": "/api/viewer"
+    },
+    {
       "source": "/(.*)",
       "destination": "/"
     }

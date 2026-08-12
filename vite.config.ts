@@ -8,16 +8,18 @@ export default defineConfig({
     {
       name: 'api-mock',
       configureServer(server) {
-        server.middlewares.use('/api/s3-presign', async (req, res) => {
-          // Dynamic import to load the handler
-          try {
-            // @ts-ignore
-            const module = await import('./api/s3-presign.js');
-            await module.default(req, res);
-          } catch (err) {
-            console.error(err);
-            res.statusCode = 500;
-            res.end(JSON.stringify({ error: 'Internal Server Error' }));
+        server.middlewares.use((req, res, next) => {
+          if (req.url && req.url.startsWith('/api/')) {
+            const apiName = req.url.split('?')[0].replace('/api/', ''); // 쿼리스트링 제거
+            import(`./api/${apiName}.js`).then(module => {
+              module.default(req, res);
+            }).catch(err => {
+              console.error(`API route ${apiName} not found or error:`, err);
+              res.statusCode = 500;
+              res.end(JSON.stringify({ error: 'Internal Server Error' }));
+            });
+          } else {
+            next();
           }
         });
       }

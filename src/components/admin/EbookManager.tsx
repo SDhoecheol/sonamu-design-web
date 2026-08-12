@@ -35,22 +35,48 @@ export default function EbookManager() {
     fetchEbooks();
   }, []);
 
-  const handleDelete = async (id: string, thumbnailUrl: string) => {
-    if (!window.confirm('정말 이 E북을 삭제하시겠습니까? (DB에서만 삭제되며, 실제 S3 파일은 유지됩니다)')) return;
+  const handleDelete = async (item: any) => {
+    if (!window.confirm('주의: 이 작업은 되돌릴 수 없습니다!\n\n데이터베이스 기록뿐만 아니라 AWS S3의 원본 파일 전체가 영구적으로 삭제됩니다.\n계속하시겠습니까?')) return;
+
+    const toastId = toast.loading('AWS 클라우드에서 파일을 완전히 분쇄하는 중입니다... 잠시만 기다려주세요!');
 
     try {
-      await supabase.from('ebooks').delete().eq('id', id);
+      // 1. AWS S3 원본 파일 완전 삭제 (서버리스 백엔드 호출)
+      if (item.viewer_url && item.viewer_url.includes('s3')) {
+        const urlParts = item.viewer_url.split('/');
+        // 'ebook_178.../index.html' 에서 'ebook_178...' 추출
+        const folderId = urlParts[urlParts.length - 2]; 
+        
+        if (folderId && folderId.startsWith('ebook_')) {
+          const deleteRes = await fetch('/api/s3-delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ folderId })
+          });
+          
+          if (!deleteRes.ok) {
+            const errData = await deleteRes.json();
+            throw new Error(`S3 삭제 실패: ${errData.error || deleteRes.statusText}`);
+          }
+        }
+      }
 
-      if (thumbnailUrl && thumbnailUrl.includes('supabase.co')) {
-        const filePath = thumbnailUrl.split('/ebooks/')[1];
+      // 2. Supabase 스토리지의 썸네일 파일 삭제
+      if (item.thumbnail_url && item.thumbnail_url.includes('supabase.co')) {
+        const filePath = item.thumbnail_url.split('/ebooks/')[1];
         if (filePath) {
           await supabase.storage.from('ebooks').remove([filePath]);
         }
       }
-      toast.success('삭제되었습니다.');
+
+      // 3. Supabase DB 레코드 삭제
+      await supabase.from('ebooks').delete().eq('id', item.id);
+
+      toast.success('AWS S3 파일 및 DB가 완벽하게 영구 삭제되었습니다.', { id: toastId });
       fetchEbooks();
     } catch (e: any) {
-      toast.error('삭제 실패: ' + e.message);
+      console.error('Delete Error:', e);
+      toast.error('삭제 중 오류 발생: ' + e.message, { id: toastId });
     }
   };
 
@@ -148,19 +174,31 @@ export default function EbookManager() {
           const file = filesArray[i];
           const presignedData = presignData.urls[i];
           
+          let fileToUpload = file;
+          
+          if (presignedData.path === 'index.html') {
+            tempViewerUrl = presignedData.finalUrl;
+            try {
+              let text = await file.text();
+              text = text.replace(
+                'var sendvisitinfo = function (type, page) { };',
+                'var sendvisitinfo = function(type, page) { window.parent.postMessage({ type: "flip_page", page: page }, "*"); };'
+              );
+              fileToUpload = new File([text], file.name, { type: file.type || 'text/html' });
+            } catch (err) {
+              console.error('Failed to inject sensor script into index.html:', err);
+            }
+          }
+          
           const uploadRes = await fetch(presignedData.uploadUrl, {
             method: 'PUT',
-            body: file,
+            body: fileToUpload,
             headers: {
               'Content-Type': file.type || 'application/octet-stream'
             }
           });
 
           if (!uploadRes.ok) throw new Error('File upload to S3 failed');
-
-          if (presignedData.path === 'index.html') {
-            tempViewerUrl = presignedData.finalUrl;
-          }
           
           uploadedCount++;
           setUploadProgress(Math.floor((uploadedCount / filesArray.length) * 100));
@@ -336,7 +374,7 @@ export default function EbookManager() {
                           <button onClick={() => handleEditClick(item)} className="bg-blue-500 hover:bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center" title="수정">
                             <span className="material-symbols-outlined text-sm">edit</span>
                           </button>
-                          <button onClick={() => handleDelete(item.id, item.thumbnail_url)} className="bg-red-500 hover:bg-red-600 text-white w-8 h-8 rounded-full flex items-center justify-center" title="삭제">
+                          <button onClick={() => handleDelete(item)} className="bg-red-500 hover:bg-red-600 text-white w-8 h-8 rounded-full flex items-center justify-center" title="삭제">
                             <span className="material-symbols-outlined text-sm">delete</span>
                           </button>
                         </div>
