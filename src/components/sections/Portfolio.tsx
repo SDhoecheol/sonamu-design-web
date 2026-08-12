@@ -52,7 +52,7 @@ const Portfolio = () => {
       if (activeSub !== 'all' && item.sub !== activeSub) return false;
       return true;
     });
-  }, [activeMain, activeSub]);
+  }, [activeMain, activeSub, allItems]);
 
   if (selectedIndex !== null) {
     lastIndexRef.current = selectedIndex;

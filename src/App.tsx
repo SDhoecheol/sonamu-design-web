@@ -1,29 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
 import Header from './components/layout/Header';
-// We will create these placeholder components shortly
-import Home from './components/sections/Home';
-import Services from './components/sections/Services';
-import Portfolio from './components/sections/Portfolio';
-import Equipment from './components/sections/Equipment';
-import Contact from './components/sections/Contact';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
-  const [activeTab, setActiveTab] = useState('home');
+  const location = useLocation();
 
   useEffect(() => {
-    // Scroll to top on tab change
+    // Scroll to top on route change
     window.scrollTo(0, 0);
-  }, [activeTab]);
+  }, [location.pathname]);
 
   return (
     <>
-      <Header activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Toaster position="top-center" />
+      <Header />
       <main>
-        {activeTab === 'home' && <Home setActiveTab={setActiveTab} />}
-        {activeTab === 'services' && <Services />}
-        {activeTab === 'portfolio' && <Portfolio />}
-        {activeTab === 'equipment' && <Equipment />}
-        {activeTab === 'contact' && <Contact />}
+        <Outlet />
       </main>
       
       <footer className="w-full bg-navy-900 text-white py-14 text-center">

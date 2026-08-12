@@ -1,11 +1,8 @@
 import React from 'react';
 import { motion } from 'motion/react';
+import { useNavigate } from 'react-router-dom';
 import { CardSlider, type DeckCard } from '../ui/card-slider';
 import { Buildings, CloudSun as Mountains, Sunset as SunHorizon, Leaf as Tree, Soundwave as Waves } from "@solar-icons/react";
-
-interface HomeProps {
-  setActiveTab: (tab: string) => void;
-}
 
 const deckCards: DeckCard[] = [
   {
@@ -50,7 +47,9 @@ const deckCards: DeckCard[] = [
   },
 ];
 
-const Home: React.FC<HomeProps> = ({ setActiveTab }) => {
+const Home: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <section id="home" className="tab-content active bg-white">
       
@@ -224,7 +223,7 @@ const Home: React.FC<HomeProps> = ({ setActiveTab }) => {
             소나무디자인은 오늘도 기본에 충실합니다.
           </h3>
           <button 
-            onClick={() => setActiveTab('portfolio')}
+            onClick={() => navigate('/portfolio')}
             className="px-8 py-4 bg-white text-navy-900 rounded-xl font-bold hover:bg-gray-100 transition-colors inline-flex items-center gap-2 shadow-xl"
           >
             소나무디자인의 작업물 보러가기 <span className="material-symbols-outlined">arrow_forward</span>

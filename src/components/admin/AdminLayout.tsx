@@ -1,27 +1,10 @@
 import { Outlet, Navigate, useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import type { Session } from '@supabase/supabase-js';
+import { useAuth } from '../../context/AuthContext';
 
 export default function AdminLayout() {
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { session, loading } = useAuth();
   const location = useLocation();
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setLoading(false);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
 
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center bg-gray-50">로딩 중...</div>;

@@ -1,27 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import toast from 'react-hot-toast';
 
 export default function AdminLogin() {
+  const { session } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [session, setSession] = useState<any>(null);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+  const navigate = useNavigate();
 
   if (session) {
     return <Navigate to="/sd-master" replace />;
@@ -30,7 +18,6 @@ export default function AdminLogin() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -39,7 +26,10 @@ export default function AdminLogin() {
 
     if (error) {
       console.error(error);
-      setError(`로그인 실패: ${error.message}`);
+      toast.error(`로그인 실패: 이메일과 비밀번호를 확인해주세요.`);
+    } else {
+      toast.success('관리자 로그인 성공!');
+      navigate('/sd-master');
     }
     setLoading(false);
   };
@@ -47,12 +37,6 @@ export default function AdminLogin() {
   return (
     <div className="max-w-md mx-auto mt-20 bg-white p-8 rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold text-center mb-8 text-navy-900">관리자 로그인</h2>
-      
-      {error && (
-        <div className="bg-red-50 text-red-500 p-3 rounded mb-4 text-sm">
-          {error}
-        </div>
-      )}
 
       <form onSubmit={handleLogin} className="space-y-4">
         <div>
