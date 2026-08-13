@@ -19,7 +19,7 @@ export default async function handler(req, res) {
     let pageCount = 0;
 
     // textForPages = ["page 1 text", "page 2 text", ...];
-    const match = text.match(/var textForPages =\[(.*?)\];/s);
+    const match = text.match(/var textForPages =\[(.*?)\]/s);
     if (match) {
       const arrayContent = match[1];
       pageCount = 1;
