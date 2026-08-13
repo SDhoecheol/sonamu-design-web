@@ -171,17 +171,30 @@ export default function EbookManager() {
           return { path: pathParts.join('/'), type: file.type || 'application/octet-stream' };
         });
 
-        const presignResponse = await fetch('/api/s3-presign', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ files: filePayloads, folderId })
-        });
-        const presignData = await presignResponse.json();
+        // 대량 파일 업로드 시 Vercel 10초 타임아웃을 방지하기 위해 100개씩 청크 분할
+        const CHUNK_SIZE = 100;
+        const presignData: { urls: any[] } = { urls: [] };
         
-        if (!presignResponse.ok) {
-          throw new Error(presignData.error || 'Failed to secure upload URLs');
+        for (let i = 0; i < filePayloads.length; i += CHUNK_SIZE) {
+          const chunk = filePayloads.slice(i, i + CHUNK_SIZE);
+          setUploadStatus(`AWS 보안 티켓 발급 중... (${Math.min(i + CHUNK_SIZE, filePayloads.length)}/${filePayloads.length})`);
+          
+          const presignResponse = await fetch('/api/s3-presign', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ files: chunk, folderId })
+          });
+          
+          const chunkData = await presignResponse.json();
+          
+          if (!presignResponse.ok) {
+            throw new Error(chunkData.error || 'Failed to secure upload URLs');
+          }
+          
+          presignData.urls.push(...chunkData.urls);
         }
-
+        
+        setUploadStatus('AWS 서버로 데이터 전송 중...');
         let uploadedCount = 0;
         let tempViewerUrl = '';
 
