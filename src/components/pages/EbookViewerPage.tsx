@@ -99,11 +99,11 @@ export default function EbookViewerPage() {
       return;
     }
     setIsSubmittingGb(true);
-    const { error } = await supabase.from('ebook_guestbook').insert({
+    const { data, error } = await supabase.from('ebook_guestbook').insert({
       ebook_id: id,
       author: gbAuthor.trim(),
       content: gbContent.trim(),
-    });
+    }).select().single();
     
     if (error) {
       console.error(error);
@@ -111,7 +111,10 @@ export default function EbookViewerPage() {
     } else {
       setGbAuthor('');
       setGbContent('');
-      // 스크롤 맨 아래로 이동 로직이 필요하다면 여기에 추가
+      if (data) {
+        setGuestbookEntries((prev) => [...prev, data]);
+      }
+      toast.success('방명록이 등록되었습니다.');
     }
     setIsSubmittingGb(false);
   };
