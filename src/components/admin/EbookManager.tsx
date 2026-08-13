@@ -217,7 +217,7 @@ export default function EbookManager() {
              throw new Error(`파일 업로드 URL 누락: ${file.name}`);
           }
           
-          let fileToUpload = file;
+          let fileToUpload: File | Uint8Array = file;
           
           if (presignedData.path === 'index.html') {
             tempViewerUrl = presignedData.finalUrl;
@@ -228,7 +228,8 @@ export default function EbookManager() {
                 'var sendvisitinfo = function (type, page) { };',
                 'var sendvisitinfo = function(t, p) { try { var target = window.parent || window; target["post" + "Message"]({type:"flip_page", page:p}, "*"); } catch(e){} };'
               );
-              fileToUpload = new File([text], file.name, { type: file.type || 'text/html' });
+              // 브라우저 버그(Synthetic File 객체 전송 시 Chunked Encoding 강제 적용 또는 Content-Type 임의 변경) 방지를 위해 순수 바이트 배열로 변환
+              fileToUpload = new TextEncoder().encode(text);
             } catch (err) {
               console.error('Failed to inject sensor script into index.html:', err);
             }
