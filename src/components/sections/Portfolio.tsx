@@ -13,6 +13,7 @@ const categories: Record<string, { name: string, sub: string[] }> = {
 };
 
 interface PortfolioItem {
+  id: string;
   main: string;
   sub: string;
   title: string;
@@ -35,6 +36,7 @@ const Portfolio = () => {
       
       if (data) {
         const items = data.map((d: any) => ({
+          id: d.id,
           main: d.category,
           sub: d.sub_category,
           title: d.title,
@@ -60,6 +62,29 @@ const Portfolio = () => {
   
   const displayIndex = selectedIndex !== null ? selectedIndex : lastIndexRef.current;
   const displayItem = filteredItems[displayIndex];
+
+  useEffect(() => {
+    if (selectedIndex !== null && filteredItems[selectedIndex]) {
+      const item = filteredItems[selectedIndex];
+      if (item.id) {
+        const trackView = async () => {
+          const sessionKey = `viewed_portfolio_${item.id}`;
+          if (!sessionStorage.getItem(sessionKey)) {
+            try {
+              const { data } = await supabase.from('portfolios').select('views').eq('id', item.id).single();
+              if (data) {
+                await supabase.from('portfolios').update({ views: (data.views || 0) + 1 }).eq('id', item.id);
+              }
+              sessionStorage.setItem(sessionKey, 'true');
+            } catch (e) {
+              console.error("Failed to track portfolio view", e);
+            }
+          }
+        };
+        trackView();
+      }
+    }
+  }, [selectedIndex, filteredItems]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
