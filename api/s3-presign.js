@@ -19,7 +19,13 @@ export default async function handler(req, res) {
 
     const { files, folderId } = body; 
 
-    const region = process.env.AWS_REGION || process.env.VITE_AWS_REGION;
+    let region = process.env.AWS_REGION || process.env.VITE_AWS_REGION;
+    // Vercel에서 AWS_REGION 환경변수를 지웠거나 누락한 경우, Vercel 시스템의 기본 리전(us-east-1)이 들어오게 됩니다.
+    // 이 경우 S3가 301 Redirect를 발생시키고 브라우저가 CORS 에러(Failed to fetch)를 내뿜게 되므로 서울 리전으로 강제 고정합니다.
+    if (!region || region.includes('us-east-1')) {
+      region = 'ap-northeast-2';
+    }
+
     const accessKeyId = process.env.AWS_ACCESS_KEY_ID || process.env.VITE_AWS_ACCESS_KEY_ID;
     const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY || process.env.VITE_AWS_SECRET_ACCESS_KEY;
     const bucketName = process.env.AWS_BUCKET || process.env.VITE_AWS_BUCKET;
