@@ -21,6 +21,11 @@ export default function EbookManager() {
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [existingThumbnailUrl, setExistingThumbnailUrl] = useState('');
 
+  // 삭제 전용 상태
+  const [deletingItem, setDeletingItem] = useState<any>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteStatus, setDeleteStatus] = useState('');
+
   const fetchEbooks = async () => {
     const { data } = await supabase
       .from('ebooks')
@@ -31,54 +36,61 @@ export default function EbookManager() {
     setLoading(false);
   };
 
-  useEffect(() => {
-    fetchEbooks();
-  }, []);
-
-  const handleDelete = async (item: any) => {
-    if (!window.confirm('주의: 이 작업은 되돌릴 수 없습니다!\n\n데이터베이스 기록뿐만 아니라 AWS S3의 원본 파일 전체가 영구적으로 삭제됩니다.\n계속하시겠습니까?')) return;
-
-    const toastId = toast.loading('AWS 클라우드에서 파일을 완전히 분쇄하는 중입니다... 잠시만 기다려주세요!');
+  const confirmDelete = async () => {
+    if (!deletingItem) return;
+    setIsDeleting(true);
+    setDeleteStatus('AWS 클라우드에 접속 중입니다...');
 
     try {
       // 1. AWS S3 원본 파일 완전 삭제 (서버리스 백엔드 호출)
-      if (item.viewer_url && item.viewer_url.includes('s3')) {
-        const urlParts = item.viewer_url.split('/');
+      if (deletingItem.viewer_url && deletingItem.viewer_url.includes('s3')) {
+        const urlParts = deletingItem.viewer_url.split('/');
         // 'ebook_178.../index.html' 에서 'ebook_178...' 추출
         const folderId = urlParts[urlParts.length - 2]; 
         
         if (folderId && folderId.startsWith('ebook_')) {
+          setDeleteStatus('S3 스토리지의 모든 파일(이미지, 스크립트)을 파기하는 중입니다. (약 5~10초 소요)');
           const deleteRes = await fetch('/api/s3-delete', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ folderId })
           });
-          
+
           if (!deleteRes.ok) {
-            const errData = await deleteRes.json();
-            throw new Error(`S3 삭제 실패: ${errData.error || deleteRes.statusText}`);
+            const errText = await deleteRes.text();
+            throw new Error(`S3 삭제 실패: ${errText || deleteRes.statusText}`);
           }
+          await deleteRes.json();
         }
       }
 
+      setDeleteStatus('데이터베이스 기록을 정리하는 중입니다...');
       // 2. Supabase 스토리지의 썸네일 파일 삭제
-      if (item.thumbnail_url && item.thumbnail_url.includes('supabase.co')) {
-        const filePath = item.thumbnail_url.split('/ebooks/')[1];
-        if (filePath) {
-          await supabase.storage.from('ebooks').remove([filePath]);
+      if (deletingItem.thumbnail_url && deletingItem.thumbnail_url.includes('supabase.co')) {
+        const path = deletingItem.thumbnail_url.split('/').pop();
+        if (path) {
+          await supabase.storage.from('ebooks').remove([`thumbnails/${path}`]);
         }
       }
 
       // 3. Supabase DB 레코드 삭제
-      await supabase.from('ebooks').delete().eq('id', item.id);
+      await supabase.from('ebooks').delete().eq('id', deletingItem.id);
 
-      toast.success('AWS S3 파일 및 DB가 완벽하게 영구 삭제되었습니다.', { id: toastId });
+      toast.success('AWS S3 파일 및 DB가 완벽하게 영구 삭제되었습니다.');
       fetchEbooks();
+      setDeletingItem(null);
     } catch (e: any) {
       console.error('Delete Error:', e);
-      toast.error('삭제 중 오류 발생: ' + e.message, { id: toastId });
+      toast.error('삭제 중 오류 발생: ' + e.message);
+    } finally {
+      setIsDeleting(false);
+      setDeleteStatus('');
     }
   };
+
+  useEffect(() => {
+    fetchEbooks();
+  }, []);
 
   const handleEditClick = (item: any) => {
     setEditId(item.id);
@@ -374,7 +386,7 @@ export default function EbookManager() {
                           <button onClick={() => handleEditClick(item)} className="bg-blue-500 hover:bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center" title="수정">
                             <span className="material-symbols-outlined text-sm">edit</span>
                           </button>
-                          <button onClick={() => handleDelete(item)} className="bg-red-500 hover:bg-red-600 text-white w-8 h-8 rounded-full flex items-center justify-center" title="삭제">
+                          <button onClick={() => setDeletingItem(item)} className="bg-red-500 hover:bg-red-600 text-white w-8 h-8 rounded-full flex items-center justify-center" title="삭제">
                             <span className="material-symbols-outlined text-sm">delete</span>
                           </button>
                         </div>
@@ -439,6 +451,48 @@ export default function EbookManager() {
           )}
         </div>
       </div>
+      {/* 삭제 확인 모달 */}
+      {deletingItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl relative overflow-hidden">
+            {isDeleting && (
+              <div className="absolute inset-0 bg-white/90 backdrop-blur flex flex-col items-center justify-center z-10">
+                <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-200 border-t-red-500 mb-4"></div>
+                <p className="font-bold text-gray-800">영구 삭제 중...</p>
+                <p className="text-xs text-gray-500 mt-2 text-center px-4">{deleteStatus}</p>
+              </div>
+            )}
+            
+            <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4 mx-auto">
+              <span className="material-symbols-outlined text-red-600 text-2xl">warning</span>
+            </div>
+            
+            <h3 className="text-xl font-bold text-center text-gray-900 mb-2">정말 삭제하시겠습니까?</h3>
+            <p className="text-sm text-gray-500 text-center mb-6">
+              <span className="font-bold text-red-500">"{deletingItem.title}"</span> E북을 삭제합니다.<br/><br/>
+              이 작업은 취소할 수 없으며, AWS S3 서버의 원본 파일과 데이터베이스 기록이 모두 <strong className="text-red-500">영구적으로 파기</strong>됩니다.
+            </p>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeletingItem(null)}
+                disabled={isDeleting}
+                className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-lg font-bold hover:bg-gray-200 transition-colors"
+              >
+                취소
+              </button>
+              <button
+                onClick={confirmDelete}
+                disabled={isDeleting}
+                className="flex-1 py-3 bg-red-500 text-white rounded-lg font-bold hover:bg-red-600 transition-colors flex justify-center items-center gap-2"
+              >
+                <span className="material-symbols-outlined text-sm">delete_forever</span>
+                영구 삭제
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
