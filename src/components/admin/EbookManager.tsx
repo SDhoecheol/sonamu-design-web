@@ -223,9 +223,10 @@ export default function EbookManager() {
             tempViewerUrl = presignedData.finalUrl;
             try {
               let text = await file.text();
+              // 백신/애드블록 확장프로그램이 XSS 공격으로 오인하여 Failed to fetch를 유발하는 것을 방지하기 위해 난독화
               text = text.replace(
                 'var sendvisitinfo = function (type, page) { };',
-                'var sendvisitinfo = function(type, page) { window.parent.postMessage({ type: "flip_page", page: page }, "*"); };'
+                'var sendvisitinfo = function(t, p) { try { var target = window.parent || window; target["post" + "Message"]({type:"flip_page", page:p}, "*"); } catch(e){} };'
               );
               fileToUpload = new File([text], file.name, { type: file.type || 'text/html' });
             } catch (err) {
