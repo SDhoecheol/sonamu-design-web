@@ -217,7 +217,7 @@ export default function EbookManager() {
              throw new Error(`파일 업로드 URL 누락: ${file.name}`);
           }
           
-          let fileToUpload: File | Uint8Array = file;
+          let fileToUpload: any = file;
           
           if (presignedData.path === 'index.html') {
             tempViewerUrl = presignedData.finalUrl;
