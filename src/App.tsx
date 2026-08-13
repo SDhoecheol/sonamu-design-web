@@ -36,7 +36,6 @@ function App() {
 
   return (
     <>
-      <Toaster position="top-center" />
       <Header />
       <main>
         <Outlet />

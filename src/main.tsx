@@ -23,6 +23,8 @@ const PortfolioManager = lazy(() => import('./components/admin/PortfolioManager.
 const EbookManager = lazy(() => import('./components/admin/EbookManager.tsx'));
 const EbookViewerPage = lazy(() => import('./components/pages/EbookViewerPage.tsx'));
 
+import { Toaster } from 'react-hot-toast';
+
 const LoadingFallback = () => (
   <div className="w-full h-screen flex items-center justify-center">
     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-navy-900"></div>
@@ -34,6 +36,7 @@ createRoot(document.getElementById('root')!).render(
     <ErrorBoundary>
       <AuthProvider>
         <BrowserRouter>
+          <Toaster position="top-center" />
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
               <Route path="/" element={<App />}>
