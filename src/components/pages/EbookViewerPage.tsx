@@ -260,13 +260,13 @@ export default function EbookViewerPage() {
       {/* 방명록 플로팅 버튼 */}
       <button
         onClick={() => setShowGuestbook(true)}
-        className="absolute bottom-6 right-6 sm:bottom-8 sm:right-8 z-40 bg-navy-900 text-white px-5 py-3 sm:px-6 sm:py-4 rounded-full shadow-2xl hover:bg-navy-800 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 group"
+        className="absolute bottom-3 right-3 sm:bottom-8 sm:right-8 z-40 bg-navy-900/90 backdrop-blur-sm text-white px-3 py-2 sm:px-6 sm:py-4 rounded-full shadow-lg sm:shadow-2xl hover:bg-navy-900 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 group"
         style={{ opacity: showOutro ? 0 : 1, pointerEvents: showOutro ? 'none' : 'auto' }}
       >
-        <span className="material-symbols-outlined text-xl sm:text-2xl group-hover:animate-pulse">chat_bubble</span>
-        <span className="font-bold text-sm sm:text-base whitespace-nowrap">방명록 남기기</span>
+        <span className="material-symbols-outlined text-base sm:text-2xl group-hover:animate-pulse">chat_bubble</span>
+        <span className="font-bold text-[11px] sm:text-base whitespace-nowrap">방명록 남기기</span>
         {guestbookEntries.length > 0 && (
-          <span className="bg-white text-navy-900 px-2 py-0.5 rounded-full text-xs font-bold ml-1 shadow-inner">
+          <span className="bg-white text-navy-900 px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-bold shadow-inner">
             {guestbookEntries.length}
           </span>
         )}
