@@ -18,6 +18,7 @@ const Contact = lazy(() => import('./components/sections/Contact.tsx'));
 const AdminLayout = lazy(() => import('./components/admin/AdminLayout.tsx'));
 const AdminLogin = lazy(() => import('./components/admin/AdminLogin.tsx'));
 const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard.tsx'));
+const AdminStatsFull = lazy(() => import('./components/admin/AdminStatsFull.tsx'));
 const PortfolioManager = lazy(() => import('./components/admin/PortfolioManager.tsx'));
 const EbookManager = lazy(() => import('./components/admin/EbookManager.tsx'));
 const EbookViewerPage = lazy(() => import('./components/pages/EbookViewerPage.tsx'));
@@ -48,6 +49,7 @@ createRoot(document.getElementById('root')!).render(
                 <Route path="login" element={<AdminLogin />} />
                 <Route path="portfolio" element={<PortfolioManager />} />
                 <Route path="ebook" element={<EbookManager />} />
+                <Route path="stats" element={<AdminStatsFull />} />
                 <Route path="*" element={<Navigate to="/sd-master" replace />} />
               </Route>
               <Route path="*" element={<NotFound />} />

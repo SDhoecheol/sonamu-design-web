@@ -71,10 +71,7 @@ const Portfolio = () => {
           const sessionKey = `viewed_portfolio_${item.id}`;
           if (!sessionStorage.getItem(sessionKey)) {
             try {
-              const { data } = await supabase.from('portfolios').select('views').eq('id', item.id).single();
-              if (data) {
-                await supabase.from('portfolios').update({ views: (data.views || 0) + 1 }).eq('id', item.id);
-              }
+              await supabase.rpc('increment_portfolio_views', { p_id: item.id });
               sessionStorage.setItem(sessionKey, 'true');
             } catch (e) {
               console.error("Failed to track portfolio view", e);

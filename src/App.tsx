@@ -23,20 +23,7 @@ function App() {
       
       if (!sessionStorage.getItem(sessionKey)) {
         try {
-          const { data } = await supabase.from('daily_visits').select('views').eq('date', today).single();
-          
-          if (data) {
-            await supabase.from('daily_visits').update({ views: data.views + 1 }).eq('date', today);
-          } else {
-            const { error } = await supabase.from('daily_visits').insert({ date: today, views: 1 });
-            if (error && error.code === '23505') {
-               const { data: retryData } = await supabase.from('daily_visits').select('views').eq('date', today).single();
-               if (retryData) {
-                 await supabase.from('daily_visits').update({ views: retryData.views + 1 }).eq('date', today);
-               }
-            }
-          }
-          
+          await supabase.rpc('increment_daily_visit', { v_date: today });
           sessionStorage.setItem(sessionKey, 'true');
         } catch (e) {
           console.error("Visit tracking failed:", e);

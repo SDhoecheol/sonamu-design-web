@@ -186,6 +186,13 @@ export default function AdminDashboard() {
       </div>
 
       {/* 차트 및 랭킹 영역 */}
+      <div className="flex justify-between items-end mb-6">
+        <h3 className="text-xl font-bold text-navy-900 mb-0">상세 통계 분석</h3>
+        <Link to="/sd-master/stats" className="text-sm font-medium text-blue-600 hover:text-blue-800 flex items-center gap-1">
+          전체 보기 <span className="material-symbols-outlined text-sm">arrow_forward</span>
+        </Link>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* 최근 7일 방문자 차트 */}
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">

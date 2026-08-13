@@ -23,11 +23,10 @@ export default async function handler(req, res) {
       throw new Error('folderId is required');
     }
 
-    // Vercel 환경 변수나 로컬 .env에서 불러옴
-    const region = process.env.VITE_AWS_REGION || process.env.AWS_REGION;
-    const accessKeyId = process.env.VITE_AWS_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID;
-    const secretAccessKey = process.env.VITE_AWS_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY;
-    const bucketName = process.env.VITE_AWS_BUCKET || process.env.AWS_BUCKET;
+    const region = process.env.AWS_REGION;
+    const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+    const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+    const bucketName = process.env.AWS_BUCKET;
 
     if (!secretAccessKey) {
         throw new Error('AWS credentials are not configured on the server.');
