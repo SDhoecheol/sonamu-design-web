@@ -25,6 +25,7 @@ export default function EbookManager() {
   const [deletingItem, setDeletingItem] = useState<any>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteStatus, setDeleteStatus] = useState('');
+  const [deleteError, setDeleteError] = useState('');
 
   const fetchEbooks = async () => {
     const { data } = await supabase
@@ -39,6 +40,7 @@ export default function EbookManager() {
   const confirmDelete = async () => {
     if (!deletingItem) return;
     setIsDeleting(true);
+    setDeleteError('');
     setDeleteStatus('AWS 클라우드에 접속 중입니다...');
 
     try {
@@ -79,12 +81,13 @@ export default function EbookManager() {
       toast.success('AWS S3 파일 및 DB가 완벽하게 영구 삭제되었습니다.');
       fetchEbooks();
       setDeletingItem(null);
-    } catch (e: any) {
-      console.error('Delete Error:', e);
-      toast.error('삭제 중 오류 발생: ' + e.message);
-    } finally {
       setIsDeleting(false);
       setDeleteStatus('');
+    } catch (e: any) {
+      console.error('Delete Error:', e);
+      setDeleteError(e.message);
+      setIsDeleting(false);
+      toast.error('삭제 중 오류 발생');
     }
   };
 
@@ -473,9 +476,18 @@ export default function EbookManager() {
               이 작업은 취소할 수 없으며, AWS S3 서버의 원본 파일과 데이터베이스 기록이 모두 <strong className="text-red-500">영구적으로 파기</strong>됩니다.
             </p>
             
+            {deleteError && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded mb-6 text-sm">
+                <span className="font-bold">삭제 실패:</span> {deleteError}
+              </div>
+            )}
+            
             <div className="flex gap-3">
               <button
-                onClick={() => setDeletingItem(null)}
+                onClick={() => {
+                  setDeletingItem(null);
+                  setDeleteError('');
+                }}
                 disabled={isDeleting}
                 className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-lg font-bold hover:bg-gray-200 transition-colors"
               >

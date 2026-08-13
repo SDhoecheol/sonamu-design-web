@@ -8,7 +8,9 @@ export default async function handler(req, res) {
 
   try {
     let body = req.body;
-    if (!body) {
+    if (typeof body === 'string') {
+      body = JSON.parse(body);
+    } else if (!body) {
        const buffers = [];
        for await (const chunk of req) {
          buffers.push(chunk);
