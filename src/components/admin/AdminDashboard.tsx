@@ -277,6 +277,18 @@ export default function AdminDashboard() {
           </Link>
         </div>
 
+        {/* 방명록 관리 카드 */}
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+          <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <span className="material-symbols-outlined text-navy-900">forum</span>
+            E북 방명록 관리
+          </h3>
+          <p className="text-gray-600 mb-6 min-h-[48px]">E북을 열람한 방문자들이 남긴 방명록과 감상평을 확인하고 삭제합니다.</p>
+          <Link to="/sd-master/guestbook" className="inline-block bg-navy-900 text-white px-5 py-2.5 rounded-lg hover:bg-navy-800 transition-colors font-medium">
+            관리하기 &rarr;
+          </Link>
+        </div>
+
         {/* 최적화 마이그레이션 도구 */}
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow md:col-span-2">
           <h3 className="text-xl font-bold mb-4 flex items-center gap-2">

@@ -21,6 +21,7 @@ const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard.tsx'
 const AdminStatsFull = lazy(() => import('./components/admin/AdminStatsFull.tsx'));
 const PortfolioManager = lazy(() => import('./components/admin/PortfolioManager.tsx'));
 const EbookManager = lazy(() => import('./components/admin/EbookManager.tsx'));
+const AdminGuestbook = lazy(() => import('./components/admin/AdminGuestbook.tsx'));
 const EbookViewerPage = lazy(() => import('./components/pages/EbookViewerPage.tsx'));
 
 import { Toaster } from 'react-hot-toast';
@@ -52,6 +53,7 @@ createRoot(document.getElementById('root')!).render(
                 <Route path="login" element={<AdminLogin />} />
                 <Route path="portfolio" element={<PortfolioManager />} />
                 <Route path="ebook" element={<EbookManager />} />
+                <Route path="guestbook" element={<AdminGuestbook />} />
                 <Route path="stats" element={<AdminStatsFull />} />
                 <Route path="*" element={<Navigate to="/sd-master" replace />} />
               </Route>
