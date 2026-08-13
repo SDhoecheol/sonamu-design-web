@@ -8,6 +8,7 @@ export default function EbookManager() {
   const [ebooks, setEbooks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState('');
   const [uploadProgress, setUploadProgress] = useState(0);
   const [editId, setEditId] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -357,7 +358,7 @@ export default function EbookManager() {
               {isUploading ? (
                 <div className="flex items-center justify-center gap-2">
                   <span className="material-symbols-outlined animate-spin text-sm">refresh</span>
-                  {ebookFiles ? `AWS 클라우드 전송 중... ${uploadProgress}%` : '업데이트 중...'}
+                  {uploadStatus ? uploadStatus : (ebookFiles ? `AWS 클라우드 전송 중... ${uploadProgress}%` : '업데이트 중...')}
                 </div>
               ) : editId ? 'E북 정보 수정하기' : 'AWS로 E북 원클릭 발행하기'}
               
