@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 
@@ -14,6 +14,7 @@ export default function EbookViewerPage() {
   // 아웃트로 오버레이 관련 상태
   const [totalPages, setTotalPages] = useState<number>(0);
   const [showOutro, setShowOutro] = useState(false);
+  const hasSeenOutroRef = useRef(false);
 
   useEffect(() => {
     const fetchEbook = async () => {
@@ -54,11 +55,16 @@ export default function EbookViewerPage() {
   useEffect(() => {
     const handleMessage = (e: MessageEvent) => {
       if (e.data && e.data.type === 'flip_page') {
-        const currentPage = parseInt(e.data.page, 10);
-        console.log("Flipped to page:", currentPage);
-        // 마지막 페이지 이상 도달 시 아웃트로 표시
-        if (totalPages > 0 && currentPage >= totalPages) {
-          setShowOutro(true);
+        // e.data.page가 "97-98" 형태로 들어올 수 있으므로 숫자만 추출하여 최대값 사용
+        const pages = String(e.data.page).match(/\d+/g);
+        const maxPage = pages ? Math.max(...pages.map(Number)) : 0;
+        console.log("Flipped to max page:", maxPage);
+        
+        // 마지막 페이지 이상 도달 시 아웃트로 표시 (단, 계속 읽기를 누른 경우 제외)
+        if (totalPages > 0 && maxPage >= totalPages) {
+          if (!hasSeenOutroRef.current) {
+            setShowOutro(true);
+          }
         } else {
           setShowOutro(false);
         }
@@ -76,6 +82,11 @@ export default function EbookViewerPage() {
     } else {
       setErrorMsg('비밀번호가 일치하지 않습니다.');
     }
+  };
+
+  const handleKeepReading = () => {
+    setShowOutro(false);
+    hasSeenOutroRef.current = true;
   };
 
   if (loading) {
@@ -158,14 +169,23 @@ export default function EbookViewerPage() {
           <p className="text-gray-200 text-base sm:text-lg font-light mb-10 tracking-wide text-center px-4">
             본 E-Book 및 인쇄물은 소나무디자인에서 <span className="font-bold text-white">제작</span>하였습니다.
           </p>
-          <a 
-            href="/" 
-            target="_blank" 
-            className="group flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-8 py-4 rounded-full transition-all backdrop-blur-md cursor-pointer"
-          >
-            <span className="font-medium">다른 작업물 둘러보기</span>
-            <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
-          </a>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <a 
+              href="https://www.sonamudesign.com/portfolio" 
+              target="_blank" 
+              className="group flex items-center justify-center gap-2 bg-white text-gray-900 px-8 py-4 rounded-full transition-all cursor-pointer font-bold hover:bg-gray-100"
+            >
+              <span>포트폴리오 둘러보기</span>
+              <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            </a>
+            <button 
+              onClick={handleKeepReading}
+              className="group flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-8 py-4 rounded-full transition-all backdrop-blur-md cursor-pointer"
+            >
+              <span className="font-medium">E북 계속 읽기</span>
+              <span className="material-symbols-outlined text-sm">menu_book</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
