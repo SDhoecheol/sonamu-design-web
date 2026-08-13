@@ -180,16 +180,26 @@ export default function EbookManager() {
           const chunk = filePayloads.slice(i, i + CHUNK_SIZE);
           setUploadStatus(`AWS 보안 티켓 발급 중... (${Math.min(i + CHUNK_SIZE, filePayloads.length)}/${filePayloads.length})`);
           
-          const presignResponse = await fetch('/api/s3-presign', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ files: chunk, folderId })
-          });
+          let presignResponse;
+          try {
+            presignResponse = await fetch('/api/s3-presign', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ files: chunk, folderId })
+            });
+          } catch (e: any) {
+            throw new Error(`서버 통신 실패 (보안 티켓 요청): ${e.message}`);
+          }
           
-          const chunkData = await presignResponse.json();
+          let chunkData;
+          try {
+            chunkData = await presignResponse.json();
+          } catch (e: any) {
+            throw new Error(`서버 응답 파싱 실패 (보안 티켓): 상태 코드 ${presignResponse.status}`);
+          }
           
           if (!presignResponse.ok) {
-            throw new Error(chunkData.error || 'Failed to secure upload URLs');
+            throw new Error(chunkData?.error || 'Failed to secure upload URLs');
           }
           
           presignData.urls.push(...chunkData.urls);
@@ -202,6 +212,10 @@ export default function EbookManager() {
         for (let i = 0; i < filesArray.length; i++) {
           const file = filesArray[i];
           const presignedData = presignData.urls[i];
+          
+          if (!presignedData || !presignedData.uploadUrl) {
+             throw new Error(`파일 업로드 URL 누락: ${file.name}`);
+          }
           
           let fileToUpload = file;
           
@@ -219,15 +233,20 @@ export default function EbookManager() {
             }
           }
           
-          const uploadRes = await fetch(presignedData.uploadUrl, {
-            method: 'PUT',
-            body: fileToUpload,
-            headers: {
-              'Content-Type': file.type || 'application/octet-stream'
-            }
-          });
+          let uploadRes;
+          try {
+            uploadRes = await fetch(presignedData.uploadUrl, {
+              method: 'PUT',
+              body: fileToUpload,
+              headers: {
+                'Content-Type': file.type || 'application/octet-stream'
+              }
+            });
+          } catch (e: any) {
+             throw new Error(`S3 업로드 통신 실패 (${file.name}): ${e.message}`);
+          }
 
-          if (!uploadRes.ok) throw new Error('File upload to S3 failed');
+          if (!uploadRes.ok) throw new Error(`File upload to S3 failed (${file.name}): ${uploadRes.status}`);
           
           uploadedCount++;
           setUploadProgress(Math.floor((uploadedCount / filesArray.length) * 100));
