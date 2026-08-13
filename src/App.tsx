@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Header from './components/layout/Header';
-import { Toaster } from 'react-hot-toast';
 import { supabase } from './lib/supabase';
 
 function App() {
