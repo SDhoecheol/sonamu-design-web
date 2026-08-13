@@ -19,12 +19,11 @@ export default async function handler(req, res) {
 
     const { files, folderId } = body; 
 
-    const region = process.env.AWS_REGION;
-    const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
-    const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
-    const bucketName = process.env.AWS_BUCKET;
-
-    const cloudfrontDomain = process.env.AWS_CLOUDFRONT_DOMAIN;
+    const region = process.env.AWS_REGION || process.env.VITE_AWS_REGION;
+    const accessKeyId = process.env.AWS_ACCESS_KEY_ID || process.env.VITE_AWS_ACCESS_KEY_ID;
+    const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY || process.env.VITE_AWS_SECRET_ACCESS_KEY;
+    const bucketName = process.env.AWS_BUCKET || process.env.VITE_AWS_BUCKET;
+    const cloudfrontDomain = process.env.AWS_CLOUDFRONT_DOMAIN || process.env.VITE_AWS_CLOUDFRONT_DOMAIN;
 
     if (!secretAccessKey) {
         throw new Error('AWS credentials are not configured on the server.');
