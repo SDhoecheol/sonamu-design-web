@@ -260,12 +260,15 @@ export default function EbookViewerPage() {
       {/* 방명록 플로팅 버튼 */}
       <button
         onClick={() => setShowGuestbook(true)}
-        className="absolute bottom-6 right-6 z-40 bg-navy-900 text-white p-4 rounded-full shadow-2xl hover:bg-navy-800 hover:scale-105 transition-all flex items-center justify-center gap-2"
+        className="absolute bottom-6 right-6 sm:bottom-8 sm:right-8 z-40 bg-navy-900 text-white px-5 py-3 sm:px-6 sm:py-4 rounded-full shadow-2xl hover:bg-navy-800 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 group"
         style={{ opacity: showOutro ? 0 : 1, pointerEvents: showOutro ? 'none' : 'auto' }}
       >
-        <span className="material-symbols-outlined text-2xl">chat_bubble</span>
+        <span className="material-symbols-outlined text-xl sm:text-2xl group-hover:animate-pulse">chat_bubble</span>
+        <span className="font-bold text-sm sm:text-base whitespace-nowrap">방명록 남기기</span>
         {guestbookEntries.length > 0 && (
-          <span className="font-bold text-sm">{guestbookEntries.length}</span>
+          <span className="bg-white text-navy-900 px-2 py-0.5 rounded-full text-xs font-bold ml-1 shadow-inner">
+            {guestbookEntries.length}
+          </span>
         )}
       </button>
 
