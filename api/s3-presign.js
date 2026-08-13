@@ -24,6 +24,8 @@ export default async function handler(req, res) {
     const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
     const bucketName = process.env.AWS_BUCKET;
 
+    const cloudfrontDomain = process.env.AWS_CLOUDFRONT_DOMAIN;
+
     if (!secretAccessKey) {
         throw new Error('AWS credentials are not configured on the server.');
     }
@@ -45,7 +47,12 @@ export default async function handler(req, res) {
         ContentType: file.type || 'application/octet-stream',
       });
       const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: 900 });
-      urls.push({ path: file.path, uploadUrl, finalUrl: `https://${bucketName}.s3.${region}.amazonaws.com/${folderId}/${file.path}` });
+      
+      const finalUrl = cloudfrontDomain 
+        ? `https://${cloudfrontDomain}/${folderId}/${file.path}`
+        : `https://${bucketName}.s3.${region}.amazonaws.com/${folderId}/${file.path}`;
+        
+      urls.push({ path: file.path, uploadUrl, finalUrl });
     }
 
     res.statusCode = 200;
