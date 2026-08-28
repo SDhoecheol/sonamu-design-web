@@ -93,67 +93,73 @@ export default function PrinterLiveMonitor() {
   const isYellowUrgent = c4065Yellow <= 5;
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 text-slate-800 font-sans pb-16">
+    <div className="max-w-7xl mx-auto space-y-6 text-slate-900 font-sans pb-16">
       
-      {/* 1. 상단 관제 헤더 및 주요 수치 (단정한 플랫 레이아웃) */}
-      <div className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+      {/* 1. 상단 글로벌 관제 헤더 (높은 명도 대비 & 굵은 Montserrat 폰트) */}
+      <div className="bg-white border border-slate-300/80 rounded-2xl p-6 shadow-sm flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
-            <span className="text-xs font-semibold text-slate-500 font-mono tracking-tight">실시간 연결됨 (2.5초 주기)</span>
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span>
+            <span className="text-xs font-bold text-emerald-800 font-mont uppercase tracking-wider">
+              Live Monitoring System (2.5s)
+            </span>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-            인쇄기 관제 센터
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
+            코니카 미놀타 통합 관제 센터
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            사내 인쇄실 코니카 미놀타 3대의 실시간 상태 및 새벽 6시 기준 일일 출력량을 관리합니다.
+          <p className="text-sm font-medium text-slate-600 mt-1">
+            사내 인쇄실 3대 장비의 인쇄 작업, 토너 및 <strong>새벽 06:00 기준 일일 카운트</strong>를 실시간 관리합니다.
           </p>
         </div>
 
-        {/* 4대 주요 지표 (이모지, 그라데이션, 불필요한 라벨 제거) */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full lg:w-auto">
-          <div className="border-l-2 border-slate-900 pl-3.5 py-1">
-            <span className="text-xs text-slate-500 block">오늘 출력량 (06시~)</span>
-            <span className="text-2xl font-black text-slate-900 font-mono tracking-tight block mt-0.5">
+        {/* 4대 주요 지표 (선명한 테두리와 큼직한 볼드 숫자) */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 w-full lg:w-auto">
+          {/* 오늘 출력량 */}
+          <div className="bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-center min-w-[140px] shadow-2xs">
+            <span className="text-xs font-bold text-slate-600 block">오늘 출력 (06시~)</span>
+            <span className="text-2xl sm:text-3xl font-black text-blue-600 font-mont tracking-tight block mt-0.5">
               +{totalToday.toLocaleString()}
             </span>
           </div>
 
-          <div className="border-l-2 border-slate-300 pl-3.5 py-1">
-            <span className="text-xs text-slate-500 block">3대 통합 누적 카운터</span>
-            <span className="text-2xl font-bold text-slate-700 font-mono tracking-tight block mt-0.5">
+          {/* 3대 통합 누적 카운터 */}
+          <div className="bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-center min-w-[140px] shadow-2xs">
+            <span className="text-xs font-bold text-slate-600 block">3대 통합 누적 카운터</span>
+            <span className="text-2xl sm:text-3xl font-black text-slate-950 font-mont tracking-tight block mt-0.5">
               {totalLife > 0 ? totalLife.toLocaleString() : '-'}
             </span>
           </div>
 
-          <div className="border-l-2 border-slate-300 pl-3.5 py-1">
-            <span className="text-xs text-slate-500 block">대기 작업</span>
-            <span className="text-2xl font-bold text-slate-700 font-mono tracking-tight block mt-0.5">
+          {/* 대기 작업 */}
+          <div className="bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-center min-w-[110px] shadow-2xs">
+            <span className="text-xs font-bold text-slate-600 block">대기 작업 (Hold)</span>
+            <span className="text-2xl sm:text-3xl font-black text-amber-700 font-mont tracking-tight block mt-0.5">
               {totalHold}건
             </span>
           </div>
 
-          <div className="border-l-2 border-emerald-600 pl-3.5 py-1">
-            <span className="text-xs text-slate-500 block">가동 장비</span>
-            <span className="text-2xl font-bold text-emerald-700 font-mono tracking-tight block mt-0.5">
-              {onlineCount} <span className="text-sm font-normal text-slate-400">/ 3</span>
+          {/* 가동 장비 */}
+          <div className="bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-center min-w-[100px] shadow-2xs">
+            <span className="text-xs font-bold text-slate-600 block">가동 장비</span>
+            <span className="text-2xl sm:text-3xl font-black text-emerald-700 font-mont tracking-tight block mt-0.5">
+              {onlineCount} <span className="text-base font-bold text-slate-400">/ 3</span>
             </span>
           </div>
         </div>
       </div>
 
-      {/* 2. 노랑 토너 보충 알림 (이모지/네온 제거, 단정한 텍스트 박스) */}
+      {/* 2. 노랑 토너 긴급 보충 알림 배너 */}
       {isYellowUrgent && (
-        <div className="bg-amber-50/80 border border-amber-200 rounded-lg p-4 flex items-center justify-between">
+        <div className="bg-amber-50 border border-amber-300 rounded-xl p-4 flex items-center justify-between shadow-xs">
           <div>
-            <p className="text-sm font-bold text-amber-900">
-              소모품 알림: AccurioPrint C4065(컬러) 노랑(Yellow) 토너 잔량 {c4065Yellow}%
+            <p className="text-sm font-black text-amber-950">
+              [소모품 보충 알림] AccurioPrint C4065(컬러) 노랑(Yellow) 토너 잔량이 <strong className="text-red-700 underline">{c4065Yellow}%</strong> 남았습니다.
             </p>
-            <p className="text-xs text-amber-700 mt-0.5">
-              인쇄 중단을 방지하기 위해 예비 토너 카트리지를 준비해 주시기 바랍니다.
+            <p className="text-xs font-bold text-amber-800 mt-0.5">
+              인쇄 중단 방지를 위해 예비 노랑 토너 카트리지를 즉시 준비해 주시기 바랍니다.
             </p>
           </div>
-          <span className="text-xs font-bold text-amber-900 bg-amber-200/60 px-2.5 py-1 rounded font-mono">
+          <span className="px-3.5 py-1.5 bg-amber-300 text-amber-950 rounded-lg text-xs font-black font-mont shadow-2xs">
             잔량 {c4065Yellow}%
           </span>
         </div>
@@ -161,20 +167,20 @@ export default function PrinterLiveMonitor() {
 
       {/* 로딩 표시 */}
       {loading && Object.keys(machines).length === 0 && (
-        <div className="bg-white border border-slate-200 rounded-xl p-16 text-center text-slate-500">
-          <p className="text-sm font-medium">인쇄기 실시간 데이터를 수신하는 중입니다...</p>
+        <div className="bg-white border border-slate-300 rounded-2xl p-16 text-center text-slate-600">
+          <p className="text-base font-bold">인쇄기 실시간 데이터를 수신하는 중입니다...</p>
         </div>
       )}
 
-      {/* 3. 3대 장비 카드 그리드 (불필요한 장식·이모지·영문 배지 전면 배제) */}
+      {/* 3. 3대 장비 카드 그리드 (시원하고 명확한 B2B 에디토리얼 레이아웃) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         {['C4065', 'C6136', 'C7136'].map((key) => {
           const m = machines[key];
           if (!m) {
             return (
-              <div key={key} className="bg-white border border-slate-200 rounded-xl p-8 flex flex-col items-center justify-center min-h-[460px] text-slate-400">
-                <h3 className="font-bold text-slate-600 text-lg">{key}</h3>
-                <p className="text-xs mt-1">연결 대기 중...</p>
+              <div key={key} className="bg-white border border-slate-300 rounded-2xl p-8 flex flex-col items-center justify-center min-h-[460px] text-slate-400">
+                <h3 className="font-black text-slate-700 text-xl font-mont">{key}</h3>
+                <p className="text-sm mt-1 font-bold">연결 대기 중...</p>
               </div>
             );
           }
@@ -183,7 +189,7 @@ export default function PrinterLiveMonitor() {
           const recentJob = m.recent_job || (m.printer_statuses && (m.printer_statuses as any[]).find(s => s._type === 'recent_job')?.data) || null;
           const hasActiveJob = !!activeJob;
 
-          // 기기 상태 정제 (이모지 대신 단정한 텍스트 태그)
+          // 알림 배지 정제 (중복 트레이 묶음 처리)
           const rawStatusList = (m.printer_statuses || []).filter((s: any) => s && !s._type);
           const distinctAlerts: string[] = [];
           const noPaperTrays: string[] = [];
@@ -224,35 +230,35 @@ export default function PrinterLiveMonitor() {
           }
 
           return (
-            <div key={key} className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs flex flex-col justify-between">
+            <div key={key} className="bg-white border border-slate-300 rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col justify-between">
               
-              {/* 장비 헤더 (심플 & 명확) */}
-              <div className="p-5 border-b border-slate-100 bg-slate-50/50">
-                <div className="flex justify-between items-center mb-1.5">
-                  <span className="text-xs font-semibold text-slate-500 font-mono">
-                    {m.printer_type === 'Color' ? '컬러 프레스' : '흑백 136ppm'}
+              {/* 장비 헤더 (고대비 & 굵은 타이포그래피) */}
+              <div className="p-5 border-b border-slate-200 bg-slate-50/80">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-xs font-black text-slate-700 bg-slate-200/80 px-2.5 py-0.5 rounded font-mont">
+                    {m.printer_type === 'Color' ? 'COLOR PRODUCTION' : 'MONO 136PPM'}
                   </span>
                   
-                  {/* 상태 텍스트 배지 (플랫 단색) */}
-                  <span className={`text-xs font-semibold px-2 py-0.5 rounded ${
-                    hasActiveJob ? 'bg-slate-900 text-white' :
-                    m.status_level === 'ready' ? 'bg-emerald-100 text-emerald-800' :
-                    m.status_level === 'warning' ? 'bg-amber-100 text-amber-800' :
-                    m.status_level === 'sleep' ? 'bg-slate-100 text-slate-600' :
-                    'bg-red-100 text-red-800'
+                  {/* 상태 텍스트 뱃지 */}
+                  <span className={`text-xs font-black px-2.5 py-1 rounded-md font-mont tracking-wide ${
+                    hasActiveJob ? 'bg-slate-950 text-white shadow-2xs' :
+                    m.status_level === 'ready' ? 'bg-emerald-100 text-emerald-900 border border-emerald-300' :
+                    m.status_level === 'warning' ? 'bg-amber-100 text-amber-900 border border-amber-300' :
+                    m.status_level === 'sleep' ? 'bg-slate-200 text-slate-700' :
+                    'bg-red-100 text-red-900 border border-red-300'
                   }`}>
-                    {hasActiveJob ? '인쇄 중' : (m.status === 'Ready' ? '대기 중' : m.status === 'Sleep' ? '절전' : m.status)}
+                    {hasActiveJob ? 'PRINTING (인쇄 중)' : (m.status === 'Ready' ? '대기 중' : m.status === 'Sleep' ? '절전 모드' : m.status)}
                   </span>
                 </div>
 
-                <h2 className="text-lg font-bold text-slate-900 tracking-tight">{m.display_name}</h2>
-                <p className="text-xs text-slate-400 mt-0.5 font-mono">IP: {m.ip_address}</p>
+                <h2 className="text-xl font-black text-slate-950 tracking-tight">{m.display_name}</h2>
+                <p className="text-xs font-bold text-slate-500 mt-0.5 font-mono">IP: {m.ip_address} • PORT: 30083</p>
 
-                {/* 기기 알림 텍스트 태그 */}
+                {/* 하드웨어 이상/알림 태그 */}
                 {distinctAlerts.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 mt-2.5 pt-2 border-t border-slate-200/60">
+                  <div className="flex flex-wrap gap-1.5 mt-3 pt-2.5 border-t border-slate-200">
                     {distinctAlerts.map((alertText, sIdx) => (
-                      <span key={sIdx} className="text-xs font-medium px-2 py-0.5 bg-red-50 text-red-700 rounded border border-red-100">
+                      <span key={sIdx} className="text-xs font-bold px-2.5 py-0.5 bg-red-50 text-red-800 rounded border border-red-200">
                         {alertText}
                       </span>
                     ))}
@@ -263,119 +269,127 @@ export default function PrinterLiveMonitor() {
               {/* 본문 콘텐츠 */}
               <div className="p-5 space-y-6 flex-1">
                 
-                {/* 1) 카운터 박스 (단위 없이 큼직한 숫자) */}
-                <div className="grid grid-cols-2 gap-4 bg-slate-50 rounded-lg p-3.5 border border-slate-100">
+                {/* 1) 카운터 스트립 (크고 선명한 숫자 폰트) */}
+                <div className="grid grid-cols-2 gap-3 bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-2xs">
                   <div>
-                    <span className="text-xs text-slate-500 block">누적 카운터</span>
-                    <span className="font-mono text-xl font-bold text-slate-900 block mt-0.5">
+                    <span className="text-xs font-bold text-slate-600 block">누적 카운터</span>
+                    <span className="font-mont text-2xl sm:text-3xl font-black text-slate-950 tracking-tight block mt-0.5">
                       {m.total_counter?.toLocaleString()}
                     </span>
                   </div>
                   <div className="text-right">
-                    <span className="text-xs text-slate-500 block">오늘 출력 (06시~)</span>
-                    <span className="font-mono text-xl font-bold text-slate-900 block mt-0.5">
+                    <span className="text-xs font-bold text-slate-600 block">오늘 출력 (06시~)</span>
+                    <span className="font-mont text-2xl sm:text-3xl font-black text-blue-600 tracking-tight block mt-0.5">
                       +{(m.today_pages || 0).toLocaleString()}
                     </span>
                   </div>
                 </div>
 
-                {/* 2) 인쇄 작업 영역 (이모지·아이콘 삭제, 단정한 명세 구조) */}
-                <div className="border border-slate-200 rounded-lg p-4 bg-white">
-                  <div className="flex justify-between items-center mb-2.5">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                {/* 2) 인쇄 작업 영역 (명확한 컨테이너 & 볼드한 명세) */}
+                <div className="border border-slate-300 rounded-xl p-4 bg-white shadow-2xs min-h-[145px] flex flex-col justify-between">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-xs font-black text-slate-700 uppercase tracking-wider font-mont">
                       {hasActiveJob ? '현재 인쇄 중인 작업' : '작업 상태'}
                     </span>
                     {hasActiveJob && (
-                      <span className="w-2 h-2 rounded-full bg-slate-900"></span>
+                      <span className="text-[11px] font-black bg-blue-600 text-white px-2 py-0.5 rounded font-mont">
+                        PRINTING
+                      </span>
                     )}
                   </div>
 
                   {hasActiveJob && activeJob ? (
                     <div className="space-y-3">
-                      <p className="font-bold text-sm text-slate-900 break-all leading-snug">
+                      <p className="font-black text-base text-slate-950 break-all leading-snug">
                         {activeJob.name || '인쇄 작업'}
                       </p>
                       
-                      <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 p-3 rounded border border-slate-100 font-mono">
+                      <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 p-3 rounded-lg border border-slate-200">
                         <div>
-                          <span className="text-slate-400 block text-[11px]">출력 부수</span>
-                          <span className="font-bold text-slate-800">
+                          <span className="text-slate-500 block text-[11px] font-bold">출력 부수</span>
+                          <span className="font-black text-slate-950 text-sm font-mont">
                             {activeJob.copies ? `${activeJob.copies.toLocaleString()}부` : '1부'} 
-                            <span className="font-normal text-slate-500 ml-1">
+                            <span className="text-xs font-bold text-slate-600 ml-1">
                               {String(activeJob.duplex).toLowerCase() === 'true' ? '(양면)' : '(단면)'}
                             </span>
                           </span>
                         </div>
                         <div>
-                          <span className="text-slate-400 block text-[11px]">페이지 구성</span>
-                          <span className="font-bold text-slate-800">
+                          <span className="text-slate-500 block text-[11px] font-bold">페이지 구성</span>
+                          <span className="font-black text-slate-950 text-sm font-mont">
                             총 {activeJob.pages || 1}p 
                             {m.printer_type === 'Color' && activeJob.color_pages !== undefined && (
-                              <span className="text-slate-500 ml-1">
-                                (컬러 {activeJob.color_pages} / 흑백 {activeJob.mono_pages})
+                              <span className="text-blue-700 font-bold ml-1 font-mono">
+                                (C:{activeJob.color_pages} / M:{activeJob.mono_pages})
                               </span>
                             )}
                           </span>
                         </div>
-                        <div className="col-span-2 text-slate-600 pt-1.5 border-t border-slate-200 flex justify-between">
-                          <span>용지: <strong>{activeJob.paper_size || 'A4'}</strong></span>
+                        <div className="col-span-2 text-xs text-slate-700 pt-1.5 border-t border-slate-200 flex justify-between font-bold">
+                          <span>용지: <strong className="text-slate-950 font-black">{activeJob.paper_size || 'A4'}</strong></span>
                           <span>종류: {activeJob.media_type || 'Plain'}</span>
                         </div>
                       </div>
                     </div>
                   ) : (
-                    <div className="text-xs text-slate-500 py-1">
+                    <div className="text-xs text-slate-600 py-1 flex-1 flex flex-col justify-center">
                       {recentJob?.name ? (
-                        <div>
-                          <span className="text-[11px] text-slate-400 block mb-0.5">최근 완료:</span>
-                          <span className="font-medium text-slate-800 truncate block">
+                        <div className="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                          <span className="text-[11px] text-slate-500 font-bold block mb-1">최근 완료된 작업:</span>
+                          <span className="font-bold text-slate-900 truncate block text-sm">
                             {recentJob.name}
                           </span>
-                          <span className="text-slate-400 font-mono mt-0.5 block">
+                          <span className="text-xs text-slate-600 font-mont font-bold mt-1 block">
                             {recentJob.pages || 1}p • {recentJob.copies || 1}부
                           </span>
                         </div>
                       ) : (
-                        <p className="text-slate-400">대기 중인 인쇄 작업이 없습니다.</p>
+                        <p className="text-slate-400 font-bold">현재 대기 중인 인쇄 작업이 없습니다.</p>
                       )}
                     </div>
                   )}
                 </div>
 
-                {/* 3) 토너 잔량 (플랫 단색 게이지 바) */}
+                {/* 3) 토너 잔량 (도톰하고 선명한 CMYK 게이지 바) */}
                 <div>
-                  <span className="text-xs font-bold text-slate-500 block mb-2.5 uppercase tracking-wider">
-                    토너 잔량
-                  </span>
-                  <div className="space-y-2">
+                  <div className="flex justify-between items-center mb-2.5">
+                    <span className="text-xs font-black text-slate-800 uppercase tracking-wider font-mont">
+                      토너 잔량 (TONER LEVEL)
+                    </span>
+                  </div>
+                  <div className="space-y-2.5">
                     {m.toner?.map((t) => {
                       const isUrgent = t.amount <= 5;
                       const tonerColor = t.name.toLowerCase();
                       
                       return (
                         <div key={t.name} className="flex items-center gap-3 text-xs">
-                          {/* 토너명 텍스트 */}
-                          <span className="w-5 text-center font-mono font-bold text-slate-600 shrink-0">
+                          {/* 토너 이니셜 박스 */}
+                          <span className={`w-6 h-6 rounded flex items-center justify-center font-mont font-black text-xs shrink-0 shadow-2xs ${
+                            tonerColor === 'cyan' ? 'bg-cyan-500 text-white' :
+                            tonerColor === 'magenta' ? 'bg-pink-600 text-white' :
+                            tonerColor === 'yellow' ? 'bg-amber-400 text-slate-950' : 'bg-slate-900 text-white'
+                          }`}>
                             {t.name[0].toUpperCase()}
                           </span>
 
-                          {/* 플랫 게이지 바 */}
-                          <div className="flex-1 h-2.5 bg-slate-100 rounded overflow-hidden">
+                          {/* 도톰한 게이지 바 (h-3.5) */}
+                          <div className="flex-1 h-3.5 bg-slate-100 rounded-full overflow-hidden border border-slate-300 shadow-inner">
                             <div
-                              className={`h-full transition-all duration-300 ${
-                                tonerColor === 'cyan' ? 'bg-cyan-600' :
+                              className={`h-full rounded-full transition-all duration-300 ${
+                                tonerColor === 'cyan' ? 'bg-cyan-500' :
                                 tonerColor === 'magenta' ? 'bg-pink-600' :
-                                tonerColor === 'yellow' ? 'bg-amber-400' : 'bg-slate-800'
+                                tonerColor === 'yellow' ? 'bg-amber-400' : 'bg-slate-900'
                               } ${isUrgent ? 'bg-red-600' : ''}`}
                               style={{ width: `${t.amount}%` }}
                             />
                           </div>
 
-                          {/* 잔량 수치 */}
-                          <span className={`w-10 text-right font-mono text-xs font-semibold ${
-                            isUrgent ? 'text-red-600 font-bold' : 'text-slate-700'
+                          {/* 잔량 퍼센트 */}
+                          <span className={`w-12 text-right font-mont font-black text-xs ${
+                            isUrgent ? 'text-red-600' : 'text-slate-900'
                           }`}>
-                            {t.amount}%
+                            {t.amount}%{isUrgent && ' 🚨'}
                           </span>
                         </div>
                       );
@@ -383,42 +397,48 @@ export default function PrinterLiveMonitor() {
                   </div>
                 </div>
 
-                {/* 4) 급지 트레이 목록 (깔끔한 리스트 구조) */}
+                {/* 4) 급지대 트레이 (테이블형 선명한 그리드) */}
                 <div>
-                  <span className="text-xs font-bold text-slate-500 block mb-2.5 uppercase tracking-wider">
-                    급지대 트레이
-                  </span>
-                  <div className="space-y-1.5">
+                  <div className="flex justify-between items-center mb-2.5">
+                    <span className="text-xs font-black text-slate-800 uppercase tracking-wider font-mont">
+                      급지대 트레이 (PAPER TRAYS)
+                    </span>
+                  </div>
+                  <div className="space-y-2">
                     {m.trays?.map((t) => {
                       const isEmpty = t.amount === 0;
                       const colorStr = t.color || 'White';
                       
                       return (
-                        <div key={t.trayId} className={`px-3 py-2 rounded border flex justify-between items-center text-xs ${
-                          isEmpty ? 'bg-slate-50/60 border-slate-100 text-slate-400' : 'bg-white border-slate-200 text-slate-700'
+                        <div key={t.trayId} className={`px-3.5 py-2.5 rounded-xl border flex justify-between items-center text-xs transition-all ${
+                          isEmpty 
+                            ? 'bg-slate-50/60 border-slate-200 text-slate-400' 
+                            : 'bg-white border-slate-300 shadow-2xs hover:border-slate-400'
                         }`}>
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded text-[11px]">
+                          <div className="flex items-center gap-2.5">
+                            <span className="font-mont font-black text-xs text-slate-900 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
                               {t.trayId}
                             </span>
-                            <span className="font-medium text-slate-500 text-xs">
-                              {colorStr.includes('White') ? '백색' : colorStr.includes('Yellow') ? '노랑' : colorStr.includes('Blue') ? '파랑' : colorStr.includes('Green') ? '초록' : colorStr}
+                            <span className="font-bold text-xs text-slate-700">
+                              {colorStr.includes('White') ? '백색지' : colorStr.includes('Yellow') ? '노랑지' : colorStr.includes('Blue') ? '파랑지' : colorStr.includes('Green') ? '초록지' : colorStr}
                             </span>
-                            <span className="font-medium text-xs text-slate-800">{t.size}</span>
+                            <span className="font-black text-xs text-slate-950 font-mont">{t.size}</span>
                           </div>
 
-                          <div className="flex items-center gap-2">
-                            <div className="w-12 h-1.5 bg-slate-100 rounded overflow-hidden">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-16 h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
                               <div
-                                className={`h-full ${
+                                className={`h-full rounded-full transition-all ${
                                   t.amount === 0 ? 'bg-transparent' :
                                   t.amount <= 10 ? 'bg-red-500' :
-                                  t.amount <= 30 ? 'bg-amber-500' : 'bg-slate-600'
+                                  t.amount <= 30 ? 'bg-amber-500' : 'bg-slate-800'
                                 }`}
                                 style={{ width: `${t.amount}%` }}
                               />
                             </div>
-                            <span className="font-mono text-xs text-slate-600 w-8 text-right font-medium">
+                            <span className={`font-mont font-black text-xs w-8 text-right ${
+                              isEmpty ? 'text-slate-400' : 'text-slate-950'
+                            }`}>
                               {t.amount}%
                             </span>
                           </div>
@@ -429,9 +449,9 @@ export default function PrinterLiveMonitor() {
                 </div>
               </div>
 
-              {/* 카드 푸터 (미니멀 정보) */}
-              <div className="px-5 py-3 bg-slate-50/70 border-t border-slate-100 flex justify-between items-center text-xs text-slate-500 font-mono">
-                <div>보관 {m.hold_jobs}건 • 폐토너 정상</div>
+              {/* 카드 푸터 */}
+              <div className="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex justify-between items-center text-xs text-slate-600 font-bold font-mont">
+                <div>보관(Hold) {m.hold_jobs}건 • 폐토너 정상</div>
                 <div>HDD {m.hdd_used_gb || 0} / {m.hdd_total_gb || 0} GB</div>
               </div>
             </div>
