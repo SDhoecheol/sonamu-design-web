@@ -48,7 +48,6 @@ interface MachineRecord {
 export default function PrinterLiveMonitor() {
   const [machines, setMachines] = useState<Record<string, MachineRecord>>({});
   const [loading, setLoading] = useState(true);
-  const [selectedRipMachine, setSelectedRipMachine] = useState<string | null>(null);
   const [mobileSelectedTab, setMobileSelectedTab] = useState<string>('ALL');
 
   useEffect(() => {
@@ -94,18 +93,9 @@ export default function PrinterLiveMonitor() {
   const c4065Yellow = machines['C4065']?.toner?.find((t) => t.name.toLowerCase() === 'yellow')?.amount ?? 100;
   const isYellowUrgent = c4065Yellow <= 5;
 
-  const getGlobalTunnelUrl = (machineKey: string) => {
+  const openRipWindow = (machineKey: string) => {
     const k = machineKey.toLowerCase();
-    return `https://jeffrey-aka-sea-anchor.trycloudflare.com/${k}/printmanager.html`;
-  };
-
-  const getLanUrl = (machineKey: string) => {
-    const m = machines[machineKey];
-    if (!m) return '';
-    return `http://${m.ip_address}:30083/printmanager.html`;
-  };
-
-  const openRipWindow = (url: string) => {
+    const url = `https://jeffrey-aka-sea-anchor.trycloudflare.com/${k}/printmanager.html`;
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
@@ -298,14 +288,14 @@ export default function PrinterLiveMonitor() {
                     <p className="text-[11px] sm:text-xs font-bold text-slate-500 mt-0.5 font-mono">IP: {m.ip_address}</p>
                   </div>
                   
-                  {/* AccurioPro RIP 정품 매니저 원터치 진입 버튼 */}
+                  {/* AccurioPro RIP 정품 매니저 원터치 1초 실행 버튼 */}
                   <button
-                    onClick={() => setSelectedRipMachine(key)}
-                    className="px-3 py-1.5 bg-slate-900 hover:bg-blue-600 text-white text-xs font-bold rounded-lg transition-all shadow-sm shrink-0 flex items-center gap-1 min-h-[36px]"
+                    onClick={() => openRipWindow(key)}
+                    className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-black rounded-lg transition-all shadow-sm shrink-0 flex items-center gap-1.5 min-h-[38px]"
                     title="AccurioPro Print Manager 원본 조작 콘솔 열기"
                   >
                     <span>RIP 조작</span>
-                    <span className="text-[10px]">↗</span>
+                    <span className="text-[11px]">↗</span>
                   </button>
                 </div>
 
@@ -510,82 +500,6 @@ export default function PrinterLiveMonitor() {
           );
         })}
       </div>
-
-      {/* 5. AccurioPro Print Manager 100% 정품 보안 런처 모달 (SSL 보안 경고 완벽 차단) */}
-      {selectedRipMachine && (
-        <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-700 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            
-            {/* 모달 헤더 */}
-            <div className="p-5 border-b border-slate-800 flex justify-between items-center">
-              <div className="flex items-center gap-2.5">
-                <span className="w-3 h-3 rounded-full bg-emerald-500"></span>
-                <div>
-                  <h3 className="text-lg font-black text-white font-mont">
-                    {selectedRipMachine} AccurioPro 콘솔
-                  </h3>
-                  <p className="text-xs text-slate-400 mt-0.5">
-                    {machines[selectedRipMachine]?.display_name}
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={() => setSelectedRipMachine(null)}
-                className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center font-bold text-sm"
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* 모달 본문 (접속 방식 선택) */}
-            <div className="p-5 space-y-4 text-slate-200">
-              <p className="text-xs text-slate-300 leading-relaxed">
-                현재 계신 네트워크 환경(모바일 데이터 vs 사무실 와이파이)에 맞는 최적의 런처 버튼을 눌러주시면, <strong>코니카 미놀타 정품 AccurioPro Print Manager 콘솔이 단독 전체화면으로 즉시 실행</strong>됩니다.
-              </p>
-
-              <div className="space-y-3 pt-1">
-                {/* 1. 외부 모바일 데이터(LTE/5G) 접속 버튼 */}
-                <button
-                  onClick={() => openRipWindow(getGlobalTunnelUrl(selectedRipMachine))}
-                  className="w-full p-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl shadow-md flex items-center justify-between font-bold text-sm transition-all"
-                >
-                  <div className="text-left">
-                    <div className="flex items-center gap-2">
-                      <span className="text-base">📱</span>
-                      <span className="font-black text-base">글로벌 모바일 LTE/5G 접속</span>
-                    </div>
-                    <p className="text-[11px] text-blue-100 font-normal mt-0.5">
-                      외부 출장, 집, 스마트폰 모바일 데이터 전용 보안 터널
-                    </p>
-                  </div>
-                  <span className="text-lg font-black bg-white/20 px-2.5 py-1 rounded-lg font-mont">열기 ↗</span>
-                </button>
-
-                {/* 2. 사내 Wi-Fi / 사무실 PC 초고속 다이렉트 버튼 */}
-                <button
-                  onClick={() => openRipWindow(getLanUrl(selectedRipMachine))}
-                  className="w-full p-4 bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 rounded-xl shadow-sm flex items-center justify-between font-bold text-sm transition-all"
-                >
-                  <div className="text-left">
-                    <div className="flex items-center gap-2">
-                      <span className="text-base">🏢</span>
-                      <span className="font-black text-slate-100">사내 Wi-Fi / 내부망 초고속 접속</span>
-                    </div>
-                    <p className="text-[11px] text-slate-400 font-normal mt-0.5">
-                      사무실 PC 및 사내 와이파이 연결 시 0.01초 다이렉트 접속
-                    </p>
-                  </div>
-                  <span className="text-lg font-black bg-slate-700 px-2.5 py-1 rounded-lg font-mont">열기 ↗</span>
-                </button>
-              </div>
-
-              <div className="pt-2 text-[11px] text-slate-400 text-center font-mono">
-                IP: {machines[selectedRipMachine]?.ip_address}:30083 • Secure SSL Gateway
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
