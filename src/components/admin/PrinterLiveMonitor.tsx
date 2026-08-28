@@ -285,7 +285,7 @@ export default function PrinterLiveMonitor() {
                 <div className="flex justify-between items-start gap-2">
                   <div>
                     <h2 className="text-lg sm:text-xl font-black text-slate-950 tracking-tight">{m.display_name}</h2>
-                    <p className="text-[11px] sm:text-xs font-bold text-slate-500 mt-0.5 font-mono">IP: {m.ip_address}</p>
+                    <p className="text-[11px] sm:text-xs font-bold text-slate-500 mt-0.5 font-mono">{key} • Realtime Live Engine</p>
                   </div>
                   
                   {/* AccurioPro RIP 정품 매니저 원터치 1초 실행 버튼 */}
