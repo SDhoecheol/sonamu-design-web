@@ -49,6 +49,7 @@ export default function PrinterLiveMonitor() {
   const [machines, setMachines] = useState<Record<string, MachineRecord>>({});
   const [loading, setLoading] = useState(true);
   const [selectedRipMachine, setSelectedRipMachine] = useState<string | null>(null);
+  const [useLanMode, setUseLanMode] = useState(false);
 
   useEffect(() => {
     const loadInitialData = async () => {
@@ -93,11 +94,15 @@ export default function PrinterLiveMonitor() {
   const c4065Yellow = machines['C4065']?.toner?.find((t) => t.name.toLowerCase() === 'yellow')?.amount ?? 100;
   const isYellowUrgent = c4065Yellow <= 5;
 
-  const getRipUrl = (machineKey: string) => {
+  const getRipUrl = (machineKey: string, useLan: boolean = false) => {
     const m = machines[machineKey];
     if (!m) return '';
-    // 사내망 우선 다이렉트 URL
-    return `http://${m.ip_address}:30083/printmanager.html`;
+    const k = machineKey.toLowerCase();
+    if (useLan) {
+      return `http://${m.ip_address}:30083/printmanager.html`;
+    }
+    // 외부 모바일 데이터(LTE/5G) 및 글로벌 보안 터널 URL
+    return `https://jeffrey-aka-sea-anchor.trycloudflare.com/${k}/printmanager.html`;
   };
 
   return (
@@ -511,15 +516,27 @@ export default function PrinterLiveMonitor() {
                 </div>
               </div>
 
-              {/* 우측 도구: 새 창으로 열기 & 닫기 */}
-              <div className="flex items-center gap-3">
+              {/* 우측 도구: 네트워크 모드 전환, 새 창으로 열기 & 닫기 */}
+              <div className="flex items-center gap-2.5">
+                <button
+                  onClick={() => setUseLanMode(!useLanMode)}
+                  className={`px-2.5 py-1 text-[11px] font-bold rounded-lg border transition-all ${
+                    useLanMode 
+                      ? 'bg-amber-950/80 border-amber-500 text-amber-300' 
+                      : 'bg-emerald-950/80 border-emerald-500 text-emerald-300'
+                  }`}
+                  title="네트워크 모드 전환"
+                >
+                  {useLanMode ? '사내 Wi-Fi 모드' : '글로벌/모바일 LTE 모드'}
+                </button>
+
                 <a
-                  href={getRipUrl(selectedRipMachine)}
+                  href={getRipUrl(selectedRipMachine, useLanMode)}
                   target="_blank"
                   rel="noreferrer"
                   className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-lg border border-slate-700 flex items-center gap-1.5 transition-all"
                 >
-                  <span>새 탭에서 전체화면 열기</span>
+                  <span>새 탭에서 열기</span>
                   <span className="text-[10px]">↗</span>
                 </a>
                 <button
@@ -534,7 +551,8 @@ export default function PrinterLiveMonitor() {
             {/* 정품 원본 화면 임베딩 (100% 바이너리 스트림 렌더링) */}
             <div className="flex-1 bg-white relative w-full h-full">
               <iframe
-                src={getRipUrl(selectedRipMachine)}
+                key={`${selectedRipMachine}-${useLanMode}`}
+                src={getRipUrl(selectedRipMachine, useLanMode)}
                 title={`AccurioPro Print Manager - ${selectedRipMachine}`}
                 className="w-full h-full border-0"
                 allow="fullscreen"
