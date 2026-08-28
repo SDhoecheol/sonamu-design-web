@@ -256,10 +256,10 @@ export default function PrinterLiveMonitor() {
                 </div>
 
                 {/* 2) 현재 진행 중인 인쇄 작업 (Active Print Job) 위젯 */}
-                <div className={`p-4 rounded-xl border transition-all ${
+                <div className={`p-4 rounded-xl border min-h-[145px] flex flex-col justify-between transition-all duration-300 ${
                   hasActiveJob 
-                    ? 'bg-blue-50/70 border-blue-200 shadow-2xs' 
-                    : 'bg-slate-50/50 border-slate-100'
+                    ? 'bg-blue-50/80 border-blue-200 shadow-2xs' 
+                    : 'bg-slate-50/60 border-slate-100'
                 }`}>
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-xs font-bold flex items-center gap-1.5 text-slate-700">
