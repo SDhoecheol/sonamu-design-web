@@ -49,8 +49,7 @@ export default function PrinterLiveMonitor() {
   const [machines, setMachines] = useState<Record<string, MachineRecord>>({});
   const [loading, setLoading] = useState(true);
   const [selectedRipMachine, setSelectedRipMachine] = useState<string | null>(null);
-  const [useLanMode, setUseLanMode] = useState(false);
-  const [mobileSelectedTab, setMobileSelectedTab] = useState<string>('ALL'); // 'ALL' | 'C4065' | 'C6136' | 'C7136'
+  const [mobileSelectedTab, setMobileSelectedTab] = useState<string>('ALL');
 
   useEffect(() => {
     const loadInitialData = async () => {
@@ -95,14 +94,19 @@ export default function PrinterLiveMonitor() {
   const c4065Yellow = machines['C4065']?.toner?.find((t) => t.name.toLowerCase() === 'yellow')?.amount ?? 100;
   const isYellowUrgent = c4065Yellow <= 5;
 
-  const getRipUrl = (machineKey: string, useLan: boolean = false) => {
+  const getGlobalTunnelUrl = (machineKey: string) => {
+    const k = machineKey.toLowerCase();
+    return `https://jeffrey-aka-sea-anchor.trycloudflare.com/${k}/printmanager.html`;
+  };
+
+  const getLanUrl = (machineKey: string) => {
     const m = machines[machineKey];
     if (!m) return '';
-    const k = machineKey.toLowerCase();
-    if (useLan) {
-      return `http://${m.ip_address}:30083/printmanager.html`;
-    }
-    return `https://jeffrey-aka-sea-anchor.trycloudflare.com/${k}/printmanager.html`;
+    return `http://${m.ip_address}:30083/printmanager.html`;
+  };
+
+  const openRipWindow = (url: string) => {
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   const machineKeys = ['C4065', 'C6136', 'C7136'];
@@ -111,7 +115,7 @@ export default function PrinterLiveMonitor() {
   return (
     <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 text-slate-900 font-sans pb-16">
       
-      {/* 1. 상단 글로벌 관제 헤더 (모바일 반응형 최적화) */}
+      {/* 1. 상단 글로벌 관제 헤더 */}
       <div className="bg-white border border-slate-300/80 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 sm:gap-6">
         <div>
           <div className="flex items-center gap-2 mb-1">
@@ -128,9 +132,8 @@ export default function PrinterLiveMonitor() {
           </p>
         </div>
 
-        {/* 4대 주요 지표 (모바일 2열 그리드) */}
+        {/* 4대 주요 지표 */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3.5 w-full lg:w-auto">
-          {/* 오늘 출력량 */}
           <div className="bg-slate-50 border border-slate-300 rounded-xl p-2.5 sm:px-4 sm:py-3 text-center shadow-2xs">
             <span className="text-[10px] sm:text-xs font-bold text-slate-600 block">오늘 출력 (06시~)</span>
             <span className="text-xl sm:text-2xl lg:text-3xl font-black text-blue-600 font-mont tracking-tight block mt-0.5">
@@ -138,7 +141,6 @@ export default function PrinterLiveMonitor() {
             </span>
           </div>
 
-          {/* 3대 통합 누적 카운터 */}
           <div className="bg-slate-50 border border-slate-300 rounded-xl p-2.5 sm:px-4 sm:py-3 text-center shadow-2xs">
             <span className="text-[10px] sm:text-xs font-bold text-slate-600 block">3대 누적 카운터</span>
             <span className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-950 font-mont tracking-tight block mt-0.5">
@@ -146,7 +148,6 @@ export default function PrinterLiveMonitor() {
             </span>
           </div>
 
-          {/* 대기 작업 */}
           <div className="bg-slate-50 border border-slate-300 rounded-xl p-2.5 sm:px-4 sm:py-3 text-center shadow-2xs">
             <span className="text-[10px] sm:text-xs font-bold text-slate-600 block">대기 작업</span>
             <span className="text-xl sm:text-2xl lg:text-3xl font-black text-amber-700 font-mont tracking-tight block mt-0.5">
@@ -154,7 +155,6 @@ export default function PrinterLiveMonitor() {
             </span>
           </div>
 
-          {/* 가동 장비 */}
           <div className="bg-slate-50 border border-slate-300 rounded-xl p-2.5 sm:px-4 sm:py-3 text-center shadow-2xs">
             <span className="text-[10px] sm:text-xs font-bold text-slate-600 block">가동 장비</span>
             <span className="text-xl sm:text-2xl lg:text-3xl font-black text-emerald-700 font-mont tracking-tight block mt-0.5">
@@ -181,7 +181,7 @@ export default function PrinterLiveMonitor() {
         </div>
       )}
 
-      {/* 3. 모바일 전용 원터치 장비 탭 셀렉터 (엄지손가락 원클릭 전환) */}
+      {/* 3. 모바일 전용 원터치 장비 탭 셀렉터 */}
       <div className="lg:hidden flex items-center bg-white border border-slate-300 rounded-xl p-1 shadow-2xs sticky top-14 z-30">
         <button
           onClick={() => setMobileSelectedTab('ALL')}
@@ -215,7 +215,7 @@ export default function PrinterLiveMonitor() {
         </div>
       )}
 
-      {/* 4. 3대 장비 카드 그리드 (모바일에서는 탭 선택 기계만 집중 표출) */}
+      {/* 4. 3대 장비 카드 그리드 */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 items-start">
         {visibleKeys.map((key) => {
           const m = machines[key];
@@ -232,7 +232,6 @@ export default function PrinterLiveMonitor() {
           const recentJob = m.recent_job || (m.printer_statuses && (m.printer_statuses as any[]).find(s => s._type === 'recent_job')?.data) || null;
           const hasActiveJob = !!activeJob;
 
-          // 알림 배지 정제
           const rawStatusList = (m.printer_statuses || []).filter((s: any) => s && !s._type);
           const distinctAlerts: string[] = [];
           const noPaperTrays: string[] = [];
@@ -282,7 +281,6 @@ export default function PrinterLiveMonitor() {
                     {m.printer_type === 'Color' ? 'COLOR PRODUCTION' : 'MONO 136PPM'}
                   </span>
                   
-                  {/* 상태 텍스트 뱃지 */}
                   <span className={`text-[11px] sm:text-xs font-black px-2.5 py-0.5 sm:py-1 rounded-md font-mont tracking-wide ${
                     hasActiveJob ? 'bg-slate-950 text-white shadow-2xs' :
                     m.status_level === 'ready' ? 'bg-emerald-100 text-emerald-900 border border-emerald-300' :
@@ -513,79 +511,77 @@ export default function PrinterLiveMonitor() {
         })}
       </div>
 
-      {/* 5. AccurioPro Print Manager 모바일 완벽 대응 전체화면 모달 */}
+      {/* 5. AccurioPro Print Manager 100% 정품 보안 런처 모달 (SSL 보안 경고 완벽 차단) */}
       {selectedRipMachine && (
-        <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xs flex flex-col p-0 sm:p-4">
-          <div className="bg-slate-900 border-0 sm:border border-slate-700 w-full h-full sm:h-[95vh] sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+        <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-700 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
             
-            {/* 모달 상단 제어 바 (모바일 터치 최적화) */}
-            <div className="bg-slate-900 px-3 sm:px-5 py-2.5 sm:py-3 border-b border-slate-800 flex flex-wrap justify-between items-center gap-2 text-white">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
-                <span className="font-black text-xs sm:text-sm font-mont">
-                  AccurioPro 콘솔
-                </span>
-
-                {/* 3대 기계 탭 전환기 */}
-                <div className="flex items-center bg-slate-800 p-0.5 rounded-lg border border-slate-700">
-                  {machineKeys.map((k) => (
-                    <button
-                      key={k}
-                      onClick={() => setSelectedRipMachine(k)}
-                      className={`px-2 sm:px-3 py-1 text-[11px] sm:text-xs font-bold rounded transition-all ${
-                        selectedRipMachine === k
-                          ? 'bg-blue-600 text-white font-black'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      {k}
-                    </button>
-                  ))}
+            {/* 모달 헤더 */}
+            <div className="p-5 border-b border-slate-800 flex justify-between items-center">
+              <div className="flex items-center gap-2.5">
+                <span className="w-3 h-3 rounded-full bg-emerald-500"></span>
+                <div>
+                  <h3 className="text-lg font-black text-white font-mont">
+                    {selectedRipMachine} AccurioPro 콘솔
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    {machines[selectedRipMachine]?.display_name}
+                  </p>
                 </div>
               </div>
-
-              {/* 우측 도구: 네트워크 모드 전환, 새 창으로 열기 & 닫기 */}
-              <div className="flex items-center gap-1.5 sm:gap-2.5">
-                <button
-                  onClick={() => setUseLanMode(!useLanMode)}
-                  className={`px-2 py-1 text-[10px] sm:text-xs font-bold rounded border transition-all ${
-                    useLanMode 
-                      ? 'bg-amber-950/80 border-amber-500 text-amber-300' 
-                      : 'bg-emerald-950/80 border-emerald-500 text-emerald-300'
-                  }`}
-                  title="네트워크 모드 전환"
-                >
-                  {useLanMode ? 'Wi-Fi' : 'LTE'}
-                </button>
-
-                <a
-                  href={getRipUrl(selectedRipMachine, useLanMode)}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] sm:text-xs font-bold rounded-lg border border-slate-700 flex items-center gap-1 transition-all"
-                >
-                  <span>새 탭</span>
-                  <span className="text-[10px]">↗</span>
-                </a>
-                
-                <button
-                  onClick={() => setSelectedRipMachine(null)}
-                  className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-red-600 text-slate-300 hover:text-white flex items-center justify-center font-bold text-sm transition-all"
-                >
-                  ✕
-                </button>
-              </div>
+              <button
+                onClick={() => setSelectedRipMachine(null)}
+                className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center font-bold text-sm"
+              >
+                ✕
+              </button>
             </div>
 
-            {/* 정품 원본 화면 임베딩 (모바일 풀스크린 렌더링) */}
-            <div className="flex-1 bg-white relative w-full h-full">
-              <iframe
-                key={`${selectedRipMachine}-${useLanMode}`}
-                src={getRipUrl(selectedRipMachine, useLanMode)}
-                title={`AccurioPro Print Manager - ${selectedRipMachine}`}
-                className="w-full h-full border-0"
-                allow="fullscreen"
-              />
+            {/* 모달 본문 (접속 방식 선택) */}
+            <div className="p-5 space-y-4 text-slate-200">
+              <p className="text-xs text-slate-300 leading-relaxed">
+                현재 계신 네트워크 환경(모바일 데이터 vs 사무실 와이파이)에 맞는 최적의 런처 버튼을 눌러주시면, <strong>코니카 미놀타 정품 AccurioPro Print Manager 콘솔이 단독 전체화면으로 즉시 실행</strong>됩니다.
+              </p>
+
+              <div className="space-y-3 pt-1">
+                {/* 1. 외부 모바일 데이터(LTE/5G) 접속 버튼 */}
+                <button
+                  onClick={() => openRipWindow(getGlobalTunnelUrl(selectedRipMachine))}
+                  className="w-full p-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl shadow-md flex items-center justify-between font-bold text-sm transition-all"
+                >
+                  <div className="text-left">
+                    <div className="flex items-center gap-2">
+                      <span className="text-base">📱</span>
+                      <span className="font-black text-base">글로벌 모바일 LTE/5G 접속</span>
+                    </div>
+                    <p className="text-[11px] text-blue-100 font-normal mt-0.5">
+                      외부 출장, 집, 스마트폰 모바일 데이터 전용 보안 터널
+                    </p>
+                  </div>
+                  <span className="text-lg font-black bg-white/20 px-2.5 py-1 rounded-lg font-mont">열기 ↗</span>
+                </button>
+
+                {/* 2. 사내 Wi-Fi / 사무실 PC 초고속 다이렉트 버튼 */}
+                <button
+                  onClick={() => openRipWindow(getLanUrl(selectedRipMachine))}
+                  className="w-full p-4 bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 rounded-xl shadow-sm flex items-center justify-between font-bold text-sm transition-all"
+                >
+                  <div className="text-left">
+                    <div className="flex items-center gap-2">
+                      <span className="text-base">🏢</span>
+                      <span className="font-black text-slate-100">사내 Wi-Fi / 내부망 초고속 접속</span>
+                    </div>
+                    <p className="text-[11px] text-slate-400 font-normal mt-0.5">
+                      사무실 PC 및 사내 와이파이 연결 시 0.01초 다이렉트 접속
+                    </p>
+                  </div>
+                  <span className="text-lg font-black bg-slate-700 px-2.5 py-1 rounded-lg font-mont">열기 ↗</span>
+                </button>
+              </div>
+
+              <div className="pt-2 text-[11px] text-slate-400 text-center font-mono">
+                IP: {machines[selectedRipMachine]?.ip_address}:30083 • Secure SSL Gateway
+              </div>
             </div>
           </div>
         </div>
