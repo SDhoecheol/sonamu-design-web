@@ -195,7 +195,9 @@ export default function PrinterLiveMonitor() {
             );
           }
 
-          const hasActiveJob = !!m.active_job;
+          const activeJob = m.active_job || (m.printer_statuses && (m.printer_statuses as any[]).find(s => s._type === 'active_job')?.data) || null;
+          const recentJob = m.recent_job || (m.printer_statuses && (m.printer_statuses as any[]).find(s => s._type === 'recent_job')?.data) || null;
+          const hasActiveJob = !!activeJob;
 
           return (
             <div key={key} className="bg-white border border-slate-200/90 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between overflow-hidden">
@@ -273,46 +275,46 @@ export default function PrinterLiveMonitor() {
                     )}
                   </div>
 
-                  {hasActiveJob && m.active_job ? (
+                  {hasActiveJob && activeJob ? (
                     <div className="space-y-2">
                       <div className="font-bold text-sm text-slate-900 break-all leading-snug line-clamp-2">
-                        📄 {m.active_job.name || '알 수 없는 인쇄 작업'}
+                        📄 {activeJob.name || '알 수 없는 인쇄 작업'}
                       </div>
                       <div className="grid grid-cols-2 gap-2 text-xs bg-white/80 p-2.5 rounded-lg border border-blue-100">
                         <div>
                           <span className="text-slate-400 block text-[10px]">출력 부수</span>
                           <span className="font-bold text-slate-800">
-                            {m.active_job.copies ? `${m.active_job.copies.toLocaleString()} 부` : '1 부'} 
-                            {m.active_job.duplex ? ' (양면)' : ' (단면)'}
+                            {activeJob.copies ? `${activeJob.copies.toLocaleString()} 부` : '1 부'} 
+                            {activeJob.duplex ? ' (양면)' : ' (단면)'}
                           </span>
                         </div>
                         <div>
                           <span className="text-slate-400 block text-[10px]">페이지 구성</span>
                           <span className="font-bold text-slate-800">
-                            총 {m.active_job.pages || 1}p 
-                            {m.printer_type === 'Color' && m.active_job.color_pages !== undefined && (
+                            총 {activeJob.pages || 1}p 
+                            {m.printer_type === 'Color' && activeJob.color_pages !== undefined && (
                               <span className="text-[10px] text-blue-600 ml-1">
-                                (C:{m.active_job.color_pages}/M:{m.active_job.mono_pages})
+                                (C:{activeJob.color_pages}/M:{activeJob.mono_pages})
                               </span>
                             )}
                           </span>
                         </div>
                         <div className="col-span-2 text-[11px] text-slate-600 pt-1 border-t border-slate-100 flex items-center justify-between">
-                          <span>용지: <strong>{m.active_job.paper_size || 'A4'}</strong></span>
-                          <span>종류: {m.active_job.media_type || 'Plain'}</span>
+                          <span>용지: <strong>{activeJob.paper_size || 'A4'}</strong></span>
+                          <span>종류: {activeJob.media_type || 'Plain'}</span>
                         </div>
                       </div>
                     </div>
                   ) : (
                     <div className="text-xs text-slate-500 py-1">
-                      {m.recent_job?.name ? (
+                      {recentJob?.name ? (
                         <div>
                           <span className="text-[11px] text-slate-400 block mb-0.5">최근 완료된 작업:</span>
                           <span className="font-medium text-slate-700 truncate block">
-                            📄 {m.recent_job.name}
+                            📄 {recentJob.name}
                           </span>
                           <span className="text-[10px] text-slate-400">
-                            ({m.recent_job.pages || 1}p / {m.recent_job.copies || 1}부)
+                            ({recentJob.pages || 1}p / {recentJob.copies || 1}부)
                           </span>
                         </div>
                       ) : (
