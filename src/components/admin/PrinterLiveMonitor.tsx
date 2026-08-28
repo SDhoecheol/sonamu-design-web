@@ -48,6 +48,7 @@ interface MachineRecord {
 export default function PrinterLiveMonitor() {
   const [machines, setMachines] = useState<Record<string, MachineRecord>>({});
   const [loading, setLoading] = useState(true);
+  const [selectedRipMachine, setSelectedRipMachine] = useState<string | null>(null);
 
   useEffect(() => {
     const loadInitialData = async () => {
@@ -92,6 +93,13 @@ export default function PrinterLiveMonitor() {
   const c4065Yellow = machines['C4065']?.toner?.find((t) => t.name.toLowerCase() === 'yellow')?.amount ?? 100;
   const isYellowUrgent = c4065Yellow <= 5;
 
+  const getRipUrl = (machineKey: string) => {
+    const m = machines[machineKey];
+    if (!m) return '';
+    // 사내망 우선 다이렉트 URL
+    return `http://${m.ip_address}:30083/printmanager.html`;
+  };
+
   return (
     <div className="max-w-7xl mx-auto space-y-6 text-slate-900 font-sans pb-16">
       
@@ -112,7 +120,7 @@ export default function PrinterLiveMonitor() {
           </p>
         </div>
 
-        {/* 4대 주요 지표 (선명한 테두리와 큼직한 볼드 숫자) */}
+        {/* 4대 주요 지표 */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 w-full lg:w-auto">
           {/* 오늘 출력량 */}
           <div className="bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-center min-w-[140px] shadow-2xs">
@@ -172,7 +180,7 @@ export default function PrinterLiveMonitor() {
         </div>
       )}
 
-      {/* 3. 3대 장비 카드 그리드 (시원하고 명확한 B2B 에디토리얼 레이아웃) */}
+      {/* 3. 3대 장비 카드 그리드 */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         {['C4065', 'C6136', 'C7136'].map((key) => {
           const m = machines[key];
@@ -189,7 +197,7 @@ export default function PrinterLiveMonitor() {
           const recentJob = m.recent_job || (m.printer_statuses && (m.printer_statuses as any[]).find(s => s._type === 'recent_job')?.data) || null;
           const hasActiveJob = !!activeJob;
 
-          // 알림 배지 정제 (중복 트레이 묶음 처리)
+          // 알림 배지 정제
           const rawStatusList = (m.printer_statuses || []).filter((s: any) => s && !s._type);
           const distinctAlerts: string[] = [];
           const noPaperTrays: string[] = [];
@@ -232,7 +240,7 @@ export default function PrinterLiveMonitor() {
           return (
             <div key={key} className="bg-white border border-slate-300 rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col justify-between">
               
-              {/* 장비 헤더 (고대비 & 굵은 타이포그래피) */}
+              {/* 장비 헤더 영역 */}
               <div className="p-5 border-b border-slate-200 bg-slate-50/80">
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-xs font-black text-slate-700 bg-slate-200/80 px-2.5 py-0.5 rounded font-mont">
@@ -251,8 +259,22 @@ export default function PrinterLiveMonitor() {
                   </span>
                 </div>
 
-                <h2 className="text-xl font-black text-slate-950 tracking-tight">{m.display_name}</h2>
-                <p className="text-xs font-bold text-slate-500 mt-0.5 font-mono">IP: {m.ip_address} • PORT: 30083</p>
+                <div className="flex justify-between items-start gap-2">
+                  <div>
+                    <h2 className="text-xl font-black text-slate-950 tracking-tight">{m.display_name}</h2>
+                    <p className="text-xs font-bold text-slate-500 mt-0.5 font-mono">IP: {m.ip_address} • PORT: 30083</p>
+                  </div>
+                  
+                  {/* AccurioPro RIP 정품 매니저 원터치 진입 버튼 */}
+                  <button
+                    onClick={() => setSelectedRipMachine(key)}
+                    className="px-3 py-1.5 bg-slate-900 hover:bg-blue-600 text-white text-xs font-bold rounded-lg transition-all shadow-sm shrink-0 flex items-center gap-1.5"
+                    title="AccurioPro Print Manager 원본 조작 콘솔 열기"
+                  >
+                    <span>RIP 조작</span>
+                    <span className="text-[10px]">↗</span>
+                  </button>
+                </div>
 
                 {/* 하드웨어 이상/알림 태그 */}
                 {distinctAlerts.length > 0 && (
@@ -269,7 +291,7 @@ export default function PrinterLiveMonitor() {
               {/* 본문 콘텐츠 */}
               <div className="p-5 space-y-6 flex-1">
                 
-                {/* 1) 카운터 스트립 (크고 선명한 숫자 폰트) */}
+                {/* 1) 카운터 스트립 */}
                 <div className="grid grid-cols-2 gap-3 bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-2xs">
                   <div>
                     <span className="text-xs font-bold text-slate-600 block">누적 카운터</span>
@@ -285,7 +307,7 @@ export default function PrinterLiveMonitor() {
                   </div>
                 </div>
 
-                {/* 2) 인쇄 작업 영역 (명확한 컨테이너 & 볼드한 명세) */}
+                {/* 2) 인쇄 작업 영역 */}
                 <div className="border border-slate-300 rounded-xl p-4 bg-white shadow-2xs min-h-[145px] flex flex-col justify-between">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-xs font-black text-slate-700 uppercase tracking-wider font-mont">
@@ -350,7 +372,7 @@ export default function PrinterLiveMonitor() {
                   )}
                 </div>
 
-                {/* 3) 토너 잔량 (도톰하고 선명한 CMYK 게이지 바) */}
+                {/* 3) 토너 잔량 */}
                 <div>
                   <div className="flex justify-between items-center mb-2.5">
                     <span className="text-xs font-black text-slate-800 uppercase tracking-wider font-mont">
@@ -364,7 +386,6 @@ export default function PrinterLiveMonitor() {
                       
                       return (
                         <div key={t.name} className="flex items-center gap-3 text-xs">
-                          {/* 토너 이니셜 박스 */}
                           <span className={`w-6 h-6 rounded flex items-center justify-center font-mont font-black text-xs shrink-0 shadow-2xs ${
                             tonerColor === 'cyan' ? 'bg-cyan-500 text-white' :
                             tonerColor === 'magenta' ? 'bg-pink-600 text-white' :
@@ -373,7 +394,6 @@ export default function PrinterLiveMonitor() {
                             {t.name[0].toUpperCase()}
                           </span>
 
-                          {/* 도톰한 게이지 바 (h-3.5) */}
                           <div className="flex-1 h-3.5 bg-slate-100 rounded-full overflow-hidden border border-slate-300 shadow-inner">
                             <div
                               className={`h-full rounded-full transition-all duration-300 ${
@@ -385,7 +405,6 @@ export default function PrinterLiveMonitor() {
                             />
                           </div>
 
-                          {/* 잔량 퍼센트 */}
                           <span className={`w-12 text-right font-mont font-black text-xs ${
                             isUrgent ? 'text-red-600' : 'text-slate-900'
                           }`}>
@@ -397,7 +416,7 @@ export default function PrinterLiveMonitor() {
                   </div>
                 </div>
 
-                {/* 4) 급지대 트레이 (테이블형 선명한 그리드) */}
+                {/* 4) 급지대 트레이 */}
                 <div>
                   <div className="flex justify-between items-center mb-2.5">
                     <span className="text-xs font-black text-slate-800 uppercase tracking-wider font-mont">
@@ -458,6 +477,72 @@ export default function PrinterLiveMonitor() {
           );
         })}
       </div>
+
+      {/* 4. AccurioPro Print Manager 100% 정품 전체화면 조작 모달 */}
+      {selectedRipMachine && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex flex-col items-center justify-center p-2 sm:p-4">
+          <div className="bg-slate-900 border border-slate-700 w-full max-w-7xl h-[95vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            
+            {/* 모달 상단 탭 및 제어 바 */}
+            <div className="bg-slate-900 px-5 py-3 border-b border-slate-800 flex justify-between items-center text-white">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                  <span className="font-black text-sm tracking-tight font-mont">
+                    AccurioPro Print Manager 콘솔
+                  </span>
+                </div>
+
+                {/* 3대 기계 탭 전환기 */}
+                <div className="flex items-center bg-slate-800 p-1 rounded-lg border border-slate-700">
+                  {['C4065', 'C6136', 'C7136'].map((k) => (
+                    <button
+                      key={k}
+                      onClick={() => setSelectedRipMachine(k)}
+                      className={`px-3 py-1 text-xs font-bold rounded transition-all ${
+                        selectedRipMachine === k
+                          ? 'bg-blue-600 text-white shadow-xs font-black'
+                          : 'text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      {k} ({machines[k]?.printer_type === 'Color' ? '컬러' : '흑백'})
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 우측 도구: 새 창으로 열기 & 닫기 */}
+              <div className="flex items-center gap-3">
+                <a
+                  href={getRipUrl(selectedRipMachine)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-lg border border-slate-700 flex items-center gap-1.5 transition-all"
+                >
+                  <span>새 탭에서 전체화면 열기</span>
+                  <span className="text-[10px]">↗</span>
+                </a>
+                <button
+                  onClick={() => setSelectedRipMachine(null)}
+                  className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-red-600 text-slate-400 hover:text-white flex items-center justify-center font-bold text-sm transition-all"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            {/* 정품 원본 화면 임베딩 (100% 바이너리 스트림 렌더링) */}
+            <div className="flex-1 bg-white relative w-full h-full">
+              <iframe
+                src={getRipUrl(selectedRipMachine)}
+                title={`AccurioPro Print Manager - ${selectedRipMachine}`}
+                className="w-full h-full border-0"
+                allow="fullscreen"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
