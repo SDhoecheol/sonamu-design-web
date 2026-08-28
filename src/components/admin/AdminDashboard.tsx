@@ -289,6 +289,26 @@ export default function AdminDashboard() {
           </Link>
         </div>
 
+        {/* 실시간 인쇄기 관제 카드 */}
+        <div className="bg-slate-900 text-white p-6 rounded-lg shadow-md border border-slate-700 hover:border-amber-400/50 transition-all">
+          <div className="flex justify-between items-start mb-4">
+            <h3 className="text-xl font-bold flex items-center gap-2 text-white">
+              <span className="material-symbols-outlined text-amber-400">print</span>
+              실시간 인쇄기 관제
+            </h3>
+            <span className="flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/30">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+              LIVE
+            </span>
+          </div>
+          <p className="text-slate-300 mb-6 min-h-[48px] text-sm leading-relaxed">
+            코니카 미놀타 3대(C4065, C6136, C7136)의 실시간 토너 잔량, 트레이 용지, 누적 카운터를 2.5초마다 관제합니다.
+          </p>
+          <Link to="/sd-master/printers" className="inline-block bg-amber-400 text-zinc-950 font-bold px-5 py-2.5 rounded-lg hover:bg-amber-300 transition-colors">
+            관제 센터 열기 &rarr;
+          </Link>
+        </div>
+
         {/* 최적화 마이그레이션 도구 */}
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow md:col-span-2">
           <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
