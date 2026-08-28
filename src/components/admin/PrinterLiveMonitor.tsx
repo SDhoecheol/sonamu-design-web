@@ -234,6 +234,53 @@ export default function PrinterLiveMonitor() {
                   <span>•</span>
                   <span>포트 30083</span>
                 </div>
+
+                {/* 실시간 기기 이상/경고 알림 배지 */}
+                {(() => {
+                  const rawList = (m.printer_statuses || []).filter((s: any) => s && !s._type);
+                  if (rawList.length === 0) return null;
+
+                  return (
+                    <div className="flex flex-wrap gap-1.5 mt-2.5">
+                      {rawList.map((st: any, sIdx: number) => {
+                        const main = st.main || '';
+                        const sub = st.sub ? `(${st.sub})` : '';
+                        
+                        let badgeText = `${main} ${sub}`;
+                        let badgeStyle = 'bg-amber-100 text-amber-900 border-amber-300';
+
+                        if (main.includes('Paper Jam')) {
+                          badgeText = `🚨 용지 걸림(잼) ${sub}`;
+                          badgeStyle = 'bg-red-100 text-red-800 border-red-300 animate-pulse';
+                        } else if (main.includes('No Paper')) {
+                          badgeText = `🔴 용지 없음 ${sub}`;
+                          badgeStyle = 'bg-red-100 text-red-800 border-red-300';
+                        } else if (main.includes('Low Paper')) {
+                          badgeText = `🟡 용지 부족 ${sub}`;
+                          badgeStyle = 'bg-amber-100 text-amber-800 border-amber-200';
+                        } else if (main.includes('Door Open') || main.includes('Cover Open')) {
+                          badgeText = `🚪 도어 열림 ${sub}`;
+                          badgeStyle = 'bg-red-100 text-red-800 border-red-300';
+                        } else if (main.includes('OutputTray') || main.includes('Output Tray Full')) {
+                          badgeText = `📦 배지대 만적 ${sub}`;
+                          badgeStyle = 'bg-amber-100 text-amber-800 border-amber-300';
+                        } else if (main.includes('Low Power') || main.includes('Sleep')) {
+                          badgeText = `💤 절전 모드`;
+                          badgeStyle = 'bg-indigo-50 text-indigo-700 border-indigo-200';
+                        } else if (main.includes('Toner Empty')) {
+                          badgeText = `🔴 토너 소진 ${sub}`;
+                          badgeStyle = 'bg-red-100 text-red-800 border-red-300 animate-pulse';
+                        }
+
+                        return (
+                          <span key={sIdx} className={`text-[11px] font-bold px-2 py-0.5 rounded-md border ${badgeStyle}`}>
+                            {badgeText}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* 본문 콘텐츠 */}
