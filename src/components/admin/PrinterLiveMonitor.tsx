@@ -93,9 +93,23 @@ export default function PrinterLiveMonitor() {
   const c4065Yellow = machines['C4065']?.toner?.find((t) => t.name.toLowerCase() === 'yellow')?.amount ?? 100;
   const isYellowUrgent = c4065Yellow <= 5;
 
+  const getDynamicTunnelUrl = () => {
+    for (const key of ['C4065', 'C6136', 'C7136']) {
+      const m = machines[key];
+      if (m && m.printer_statuses) {
+        const found = (m.printer_statuses as any[]).find((s) => s && s._type === 'tunnel_url');
+        if (found && found.data) {
+          return found.data;
+        }
+      }
+    }
+    return 'https://gamecube-returns-fixes-updating.trycloudflare.com';
+  };
+
   const openRipWindow = (machineKey: string) => {
     const k = machineKey.toLowerCase();
-    const url = `https://jeffrey-aka-sea-anchor.trycloudflare.com/${k}/printmanager.html`;
+    const tunnelUrl = getDynamicTunnelUrl();
+    const url = `${tunnelUrl}/${k}/printmanager.html`;
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
