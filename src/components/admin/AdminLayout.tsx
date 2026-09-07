@@ -19,7 +19,6 @@ export default function AdminLayout() {
   const navItems = [
     { path: '/sd-master', label: '대시보드' },
     { path: '/sd-master/printers', label: '실시간 인쇄기 관제', highlight: true },
-    { path: '/sd-master/printer-history', label: '작업별 카운트 이력' },
     { path: '/sd-master/portfolio', label: '포트폴리오' },
     { path: '/sd-master/ebook', label: 'E북 호스팅' },
     { path: '/sd-master/guestbook', label: '방명록' },

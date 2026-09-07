@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 
 interface ActiveJob {
@@ -129,18 +128,9 @@ export default function PrinterLiveMonitor() {
               Live Realtime (2.5s)
             </span>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-950 tracking-tight">
-              코니카 미놀타 통합 관제 센터
-            </h1>
-            <Link
-              to="/sd-master/printer-history"
-              className="px-3 py-1 bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200 rounded-lg text-xs font-bold transition-all shadow-2xs inline-flex items-center gap-1 font-mont"
-            >
-              <span>작업별 카운트 이력 (600건)</span>
-              <span>➔</span>
-            </Link>
-          </div>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-950 tracking-tight">
+            코니카 미놀타 통합 관제 센터
+          </h1>
           <p className="text-xs sm:text-sm font-medium text-slate-600 mt-0.5">
             사내 인쇄실 3대 장비의 인쇄 작업 및 <strong>새벽 06:00 기준 일일 카운트</strong> 실시간 계측
           </p>
