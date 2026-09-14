@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 
 const Header: React.FC = () => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   const menuItems = [
     { path: '/', label: '홈' },
     { path: '/services', label: '서비스 안내' },
@@ -11,20 +13,65 @@ const Header: React.FC = () => {
   ];
 
   return (
-    <header className="w-full bg-navy-900 text-white shadow-lg sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-6 py-5 flex flex-col items-center">
-        <Link to="/" className="text-center mb-5 cursor-pointer hover:opacity-80 transition-opacity block">
-          <h1 className="font-mont font-bold text-2xl tracking-wider">SONAMU<span className="text-blue-400">.</span></h1>
-          <p className="text-[10px] text-gray-400 tracking-widest">기획 · 편집디자인 · 직접인쇄</p>
+    <header className="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100/70 transition-all duration-300">
+      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+        
+        {/* Left: Brand Logo */}
+        <Link to="/" className="flex items-center gap-3 cursor-pointer group" onClick={() => setMobileMenuOpen(false)}>
+          <span className="font-mont font-black text-2xl sm:text-3xl tracking-tighter text-zinc-950 group-hover:opacity-90 transition-opacity">
+            SONAMU<span className="text-blue-600">.</span>
+          </span>
+          <span className="hidden sm:inline-block text-[11px] font-medium text-gray-400 pl-3 border-l border-gray-200 tracking-wider">
+            기획 · 편집디자인 · 직접인쇄
+          </span>
         </Link>
-        <nav>
-          <ul className="flex flex-wrap justify-center items-center gap-4 md:gap-10">
+
+        {/* Right: Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-8">
+          {menuItems.map(item => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) =>
+                `text-[15px] tracking-tight transition-colors py-1 ${
+                  isActive
+                    ? 'text-blue-600 font-bold border-b-2 border-blue-600'
+                    : 'text-zinc-600 hover:text-zinc-950 font-medium'
+                }`
+              }
+            >
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+
+        {/* Mobile Hamburger Button */}
+        <button
+          onClick={() => setMobileMenuOpen(prev => !prev)}
+          className="md:hidden p-2 text-zinc-700 hover:text-zinc-950 focus:outline-none"
+          aria-label="메뉴 열기/닫기"
+        >
+          <span className="material-symbols-outlined text-2xl">
+            {mobileMenuOpen ? 'close' : 'menu'}
+          </span>
+        </button>
+      </div>
+
+      {/* Mobile Menu Dropdown */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-white/95 backdrop-blur-md border-b border-gray-200 px-6 py-4 shadow-lg animate-fadeIn">
+          <ul className="flex flex-col gap-3">
             {menuItems.map(item => (
               <li key={item.path}>
-                <NavLink 
+                <NavLink
                   to={item.path}
-                  className={({ isActive }) => 
-                    `px-2 py-1 transition-colors ${isActive ? 'text-white font-bold border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}`
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `block py-2 text-base ${
+                      isActive
+                        ? 'text-blue-600 font-bold'
+                        : 'text-zinc-700 hover:text-zinc-950 font-medium'
+                    }`
                   }
                 >
                   {item.label}
@@ -32,10 +79,11 @@ const Header: React.FC = () => {
               </li>
             ))}
           </ul>
-        </nav>
-      </div>
+        </div>
+      )}
     </header>
   );
 };
 
 export default Header;
+

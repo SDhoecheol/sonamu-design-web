@@ -33,10 +33,12 @@ function App() {
     trackVisit();
   }, []);
 
+  const isHome = location.pathname === '/';
+
   return (
     <>
       <Header />
-      <main>
+      <main className={isHome ? 'w-full' : 'w-full pt-20'}>
         <Outlet />
       </main>
       
