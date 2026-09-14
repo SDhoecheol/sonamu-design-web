@@ -317,13 +317,13 @@ export default function EbookManager() {
         <button onClick={() => navigate('/sd-master')} className="p-2 hover:bg-gray-200 rounded-full transition-colors">
           <span className="material-symbols-outlined">arrow_back</span>
         </button>
-        <h2 className="text-3xl font-bold text-navy-900">E북 호스팅 관리 (AWS S3 연동)</h2>
+        <h2 className="text-3xl font-bold text-navy-900">전자책 (E-Book) 관리</h2>
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-1 bg-white p-6 rounded-lg shadow-sm border border-gray-200 h-fit">
           <div className="flex justify-between items-center mb-4 border-b pb-2">
-            <h3 className="text-lg font-bold text-navy-900">{editId ? 'E북 내용 수정' : '새 E북 원클릭 등록'}</h3>
+            <h3 className="text-lg font-bold text-navy-900">{editId ? '전자책 내용 수정' : '신규 전자책 등록'}</h3>
             {editId && (
               <button onClick={resetForm} className="text-xs text-gray-500 hover:text-navy-900 underline">
                 작성 취소
@@ -336,12 +336,12 @@ export default function EbookManager() {
               <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full p-2 border border-gray-300 rounded focus:ring-navy-500" required />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">작가명 (선택)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">발행/작성 (선택)</label>
               <input type="text" value={author} onChange={(e) => setAuthor(e.target.value)} className="w-full p-2 border border-gray-300 rounded focus:ring-navy-500" />
             </div>
             
             <div className="bg-blue-50 p-3 rounded border border-blue-200">
-              <label className="block text-sm font-bold text-blue-900 mb-1">E북 폴더 통째로 업로드 {editId && '(변경시에만 선택)'}</label>
+              <label className="block text-sm font-bold text-blue-900 mb-1">전자책 폴더 업로드 {editId && '(변경 시에만 선택)'}</label>
               <input 
                 type="file" 
                 // @ts-ignore
@@ -351,22 +351,22 @@ export default function EbookManager() {
                 className="w-full p-2 border border-blue-300 bg-white rounded text-sm cursor-pointer" 
                 required={!editId} 
               />
-              <p className="text-xs text-blue-700 mt-1">FlipPDF로 추출한 폴더를 선택하면 파일이 AWS 클라우드로 자동 전송됩니다.</p>
+              <p className="text-xs text-blue-700 mt-1">FlipPDF 등으로 추출한 HTML 폴더를 선택하면 파일이 업로드됩니다.</p>
               {ebookFiles && (
                 <p className="text-xs text-green-700 mt-2 font-bold">✓ 총 {ebookFiles.length}개 파일 선택됨</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">간단한 설명 (선택)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">설명 (선택)</label>
               <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="w-full p-2 border border-gray-300 rounded focus:ring-navy-500" rows={2}></textarea>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">열람 비밀번호 (선택)</label>
-              <input type="text" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-2 border border-gray-300 rounded focus:ring-navy-500" placeholder="비워두면 공개 E북으로 등록됩니다." />
+              <input type="text" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-2 border border-gray-300 rounded focus:ring-navy-500" placeholder="비워둘 경우 비밀번호 없이 열람 가능합니다." />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">표지 썸네일 이미지 {editId && '(변경시에만 업로드)'}</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">표지 썸네일 이미지 {editId && '(변경 시에만 업로드)'}</label>
               {editId && existingThumbnailUrl && !thumbnailFile && (
                 <div className="mb-2 w-full h-32 bg-gray-100 rounded overflow-hidden">
                   <img src={existingThumbnailUrl} alt="기존 썸네일" className="w-full h-full object-cover opacity-70" />
@@ -379,9 +379,9 @@ export default function EbookManager() {
               {isUploading ? (
                 <div className="flex items-center justify-center gap-2">
                   <span className="material-symbols-outlined animate-spin text-sm">refresh</span>
-                  {uploadStatus ? uploadStatus : (ebookFiles ? `AWS 클라우드 전송 중... ${uploadProgress}%` : '업데이트 중...')}
+                  {uploadStatus ? uploadStatus : (ebookFiles ? `파일 전송 중... ${uploadProgress}%` : '업데이트 중...')}
                 </div>
-              ) : editId ? 'E북 정보 수정하기' : 'AWS로 E북 원클릭 발행하기'}
+              ) : editId ? '전자책 정보 수정하기' : '전자책 등록하기'}
               
               {isUploading && uploadProgress > 0 && (
                 <div 
@@ -430,25 +430,25 @@ export default function EbookManager() {
                         </div>
                         <div className="absolute bottom-2 left-2 bg-black/60 text-white px-2 py-1 text-xs rounded font-medium flex items-center gap-1">
                           {item.password && <span className="material-symbols-outlined text-[10px]">lock</span>}
-                          AWS S3 Hosted
+                          클라우드 호스팅
                         </div>
                       </div>
                       <div className="p-4 flex-1 flex flex-col">
                         <h4 className="font-bold text-lg text-gray-900 mb-1 truncate">{item.title}</h4>
-                        <p className="text-sm text-gray-500 mb-3 truncate">{item.author || '작가 미상'}</p>
+                        <p className="text-sm text-gray-500 mb-3 truncate">{item.author || '소나무디자인'}</p>
                         <div className="mt-auto flex flex-col gap-2">
                           <button 
                             onClick={() => {
                               navigator.clipboard.writeText(`${window.location.origin}/viewer/${item.id}`);
-                              toast.success('개인 링크가 복사되었습니다!');
+                              toast.success('열람 링크가 복사되었습니다.');
                             }}
                             className="w-full bg-blue-50 text-blue-600 border border-blue-200 py-2 rounded text-sm font-bold hover:bg-blue-100 transition-colors"
                           >
-                            🔗 고객 전달용 링크 복사
+                            고객 전달용 링크 복사
                           </button>
                           <div className="flex justify-between items-center text-xs text-gray-400 mt-1">
-                            <span>👀 조회수 {item.views || 0}회</span>
-                            <a href={`/viewer/${item.id}`} target="_blank" rel="noreferrer" className="text-gray-500 hover:underline">내가 미리보기 ↗</a>
+                            <span>조회수 {(item.views || 0).toLocaleString()}회</span>
+                            <a href={`/viewer/${item.id}`} target="_blank" rel="noreferrer" className="text-gray-500 hover:underline">미리보기 ↗</a>
                           </div>
                         </div>
                       </div>

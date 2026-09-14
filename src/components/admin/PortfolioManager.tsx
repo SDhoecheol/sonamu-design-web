@@ -33,7 +33,7 @@ export default function PortfolioManager() {
   }, []);
 
   const handleDelete = async (id: string, imageUrl: string) => {
-    if (!window.confirm('정말 이 포트폴리오를 삭제하시겠습니까?')) return;
+    if (!window.confirm('선택한 포트폴리오를 삭제하시겠습니까? (삭제 후 복구할 수 없습니다.)')) return;
 
     try {
       await supabase.from('portfolios').delete().eq('id', id);
@@ -159,7 +159,7 @@ export default function PortfolioManager() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-1 bg-white p-6 rounded-lg shadow-sm border border-gray-200 h-fit">
           <div className="flex justify-between items-center mb-4 border-b pb-2">
-            <h3 className="text-lg font-bold text-navy-900">{editId ? '포트폴리오 수정' : '새 포트폴리오 추가'}</h3>
+            <h3 className="text-lg font-bold text-navy-900">{editId ? '포트폴리오 수정' : '신규 포트폴리오 등록'}</h3>
             {editId && (
               <button onClick={resetForm} className="text-xs text-gray-500 hover:text-navy-900 underline">
                 작성 취소
@@ -190,7 +190,7 @@ export default function PortfolioManager() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">대표 이미지 {editId && '(변경시에만 업로드)'}</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">대표 이미지 {editId && '(변경 시에만 업로드)'}</label>
               {editId && existingImageUrl && !file && (
                 <div className="mb-2 w-full h-32 bg-gray-100 rounded overflow-hidden">
                   <img src={existingImageUrl} alt="기존 이미지" className="w-full h-full object-cover opacity-70" />
@@ -200,7 +200,7 @@ export default function PortfolioManager() {
             </div>
 
             <button type="submit" disabled={isUploading} className="w-full bg-navy-900 text-white p-3 rounded font-medium hover:bg-navy-800 disabled:bg-gray-400 mt-4 transition-colors">
-              {isUploading ? '업로드 중...' : editId ? '수정 내용 저장하기' : '포트폴리오 등록하기'}
+              {isUploading ? '업로드 중...' : editId ? '수정사항 저장' : '포트폴리오 등록'}
             </button>
           </form>
         </div>

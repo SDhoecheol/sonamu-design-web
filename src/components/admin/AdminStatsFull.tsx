@@ -85,7 +85,7 @@ export default function AdminStatsFull() {
           </h3>
           <div className="flex items-center gap-4">
             <button onClick={prevMonth} className="p-2 hover:bg-gray-100 rounded-full"><span className="material-symbols-outlined">chevron_left</span></button>
-            <span className="font-bold text-lg">{currentMonth.getFullYear()}년 {currentMonth.getMonth() + 1}월 (총 {totalMonthViews}명)</span>
+            <span className="font-bold text-lg">{currentMonth.getFullYear()}년 {currentMonth.getMonth() + 1}월 (총 {totalMonthViews.toLocaleString()}명)</span>
             <button onClick={nextMonth} className="p-2 hover:bg-gray-100 rounded-full"><span className="material-symbols-outlined">chevron_right</span></button>
           </div>
         </div>
@@ -97,7 +97,7 @@ export default function AdminStatsFull() {
             dailyVisits.map((day, idx) => (
               <div key={idx} className="relative flex flex-col items-center flex-1 h-full justify-end group min-w-[20px]">
                 <div className="absolute -top-8 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
-                  {day.views}명
+                  {day.views.toLocaleString()}명
                 </div>
                 <div 
                   className="w-full bg-blue-100 hover:bg-blue-400 transition-colors rounded-t-sm"
@@ -113,7 +113,7 @@ export default function AdminStatsFull() {
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
         <h3 className="text-xl font-bold flex items-center gap-2 mb-6">
           <span className="material-symbols-outlined text-indigo-600">leaderboard</span>
-          전체 포트폴리오 성적표
+          포트폴리오 누적 조회 순위
         </h3>
         
         {loading ? (
@@ -127,7 +127,7 @@ export default function AdminStatsFull() {
                   <th className="p-3 text-sm font-bold text-gray-600">썸네일</th>
                   <th className="p-3 text-sm font-bold text-gray-600">제목</th>
                   <th className="p-3 text-sm font-bold text-gray-600">카테고리</th>
-                  <th className="p-3 text-sm font-bold text-gray-600 text-right">클릭(조회수)</th>
+                  <th className="p-3 text-sm font-bold text-gray-600 text-right">누적 조회수</th>
                 </tr>
               </thead>
               <tbody>
@@ -143,7 +143,7 @@ export default function AdminStatsFull() {
                     </td>
                     <td className="p-3 font-bold text-navy-900">{item.title}</td>
                     <td className="p-3 text-sm text-gray-500">{item.category} &gt; {item.sub_category}</td>
-                    <td className="p-3 text-right font-bold text-lg text-indigo-600">{item.views || 0}</td>
+                    <td className="p-3 text-right font-bold text-lg text-indigo-600">{(item.views || 0).toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>

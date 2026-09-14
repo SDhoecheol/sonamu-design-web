@@ -20,7 +20,7 @@ export default function AdminLayout() {
     { path: '/sd-master', label: '대시보드' },
     { path: '/sd-master/printers', label: '실시간 인쇄기 관제', highlight: true },
     { path: '/sd-master/portfolio', label: '포트폴리오' },
-    { path: '/sd-master/ebook', label: 'E북 호스팅' },
+    { path: '/sd-master/ebook', label: '전자책(E-Book)' },
     { path: '/sd-master/guestbook', label: '방명록' },
     { path: '/sd-master/stats', label: '통계 분석' },
   ];

@@ -195,7 +195,7 @@ interface CardSliderProps {
  * @param {DeckCard[]} cards - Cards in deck order, exactly CARD_COUNT entries [Required]
  * @param {string} label - Eyebrow text + accessible carousel name [Optional, default: "Field atlas"]
  */
-export function CardSlider({ cards, label = "Field atlas" }: CardSliderProps) {
+export function CardSlider({ cards, label = "PORTFOLIO" }: CardSliderProps) {
   const viewProgress = useMotionValue(0);
   const startX = useRef<number | null>(null);
   const startValue = useRef<number | null>(null);
@@ -319,7 +319,7 @@ export function CardSlider({ cards, label = "Field atlas" }: CardSliderProps) {
       <div className="flex items-center gap-3">
         <motion.button
           type="button"
-          aria-label="Previous card"
+          aria-label="이전 작업물 보기"
           onClick={() => cycle(-1)}
           whileTap={{ scale: 0.92 }}
           transition={TAP_SPRING}
@@ -333,7 +333,7 @@ export function CardSlider({ cards, label = "Field atlas" }: CardSliderProps) {
             <button
               key={card.id}
               type="button"
-              aria-label={`Go to card ${i + 1} of ${CARD_COUNT}`}
+              aria-label={`${CARD_COUNT}개 중 ${i + 1}번째 작업물로 이동`}
               aria-current={i === activeIndex ? "true" : undefined}
               onClick={() =>
                 animate(viewProgress, snapToNearest(i, viewProgress.get()), SETTLE_SPRING)
@@ -354,7 +354,7 @@ export function CardSlider({ cards, label = "Field atlas" }: CardSliderProps) {
 
         <motion.button
           type="button"
-          aria-label="Next card"
+          aria-label="다음 작업물 보기"
           onClick={() => cycle(1)}
           whileTap={{ scale: 0.92 }}
           transition={TAP_SPRING}

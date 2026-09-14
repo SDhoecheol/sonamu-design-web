@@ -205,7 +205,7 @@ export default function PrinterJobHistory() {
             인쇄 작업별 카운트 증가 이력
           </h1>
           <p className="text-xs sm:text-sm font-medium text-slate-600 mt-0.5">
-            코니카 미놀타 3대 컨트롤러에 공식 기록된 인쇄 완료 작업 및 <strong>작업별 카운트 증가량</strong>을 영구 관리합니다.
+            코니카 미놀타 디지털 프레스 컨트롤러에 기록된 인쇄 완료 작업 및 <strong>작업별 카운트 증가량</strong>을 관리합니다.
           </p>
         </div>
 
@@ -263,7 +263,7 @@ export default function PrinterJobHistory() {
         <div className="flex flex-wrap items-center gap-1.5 border-b border-slate-200 pb-3">
           <span className="text-xs font-bold text-slate-500 mr-2">인쇄 장비:</span>
           {[
-            { key: 'ALL', label: '3대 전체보기' },
+            { key: 'ALL', label: '전체보기' },
             { key: 'C4065', label: 'C4065 (컬러)' },
             { key: 'C6136', label: 'C6136 (흑백 1호)' },
             { key: 'C7136', label: 'C7136 (흑백 2호)' },
@@ -312,7 +312,7 @@ export default function PrinterJobHistory() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="작업명, 파일명 검색 (예: 신청서, 리플렛, 김용임)..."
+              placeholder="작업명, 파일명 검색 (예: 보고서, 리플렛, 소식지)..."
               className="w-full pl-3.5 pr-9 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
             />
             {searchQuery && (

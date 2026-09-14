@@ -302,7 +302,7 @@ export default function AdminDashboard() {
             </span>
           </div>
           <p className="text-slate-300 mb-6 min-h-[48px] text-sm leading-relaxed">
-            코니카 미놀타 3대(C4065, C6136, C7136)의 실시간 토너 잔량, 트레이 용지, 누적 카운터를 2.5초마다 관제합니다.
+            코니카 미놀타 인쇄기의 토너 잔량, 급지 트레이 용지, 누적 카운터를 실시간으로 모니터링합니다.
           </p>
           <Link to="/sd-master/printers" className="inline-block bg-amber-400 text-zinc-950 font-bold px-5 py-2.5 rounded-lg hover:bg-amber-300 transition-colors">
             관제 센터 열기 &rarr;
@@ -313,9 +313,9 @@ export default function AdminDashboard() {
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow md:col-span-2">
           <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
             <span className="material-symbols-outlined text-green-600">rocket_launch</span>
-            시스템 최적화 도구 (WebP 마이그레이션)
+            이미지 최적화 도구 (WebP 변환)
           </h3>
-          <p className="text-gray-600 mb-6">과거에 업로드된 무거운 포트폴리오 원본 이미지(JPG/PNG)를 화질 저하 없이 초경량 WebP 포맷으로 일괄 압축 및 변환합니다. 사이트 로딩 속도가 획기적으로 개선됩니다.</p>
+          <p className="text-gray-600 mb-6">기존 등록된 포트폴리오 이미지를 고효율 WebP 규격으로 일괄 변환하여 페이지 로딩 속도를 향상시킵니다.</p>
           <div className="flex items-center gap-4">
             <button 
               onClick={handleMigrateWebp}

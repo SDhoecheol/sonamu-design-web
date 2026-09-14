@@ -40,10 +40,16 @@ function App() {
         <Outlet />
       </main>
       
-      <footer className="w-full bg-navy-900 text-white py-14 text-center">
-        <p className="text-[10px] text-gray-600 tracking-[0.4em] uppercase font-mont">
-          © 2026 SONAMU DESIGN. ALL RIGHTS RESERVED.
-        </p>
+      <footer className="w-full bg-navy-900 text-gray-400 py-12 px-6 text-center text-xs leading-relaxed border-t border-navy-800">
+        <div className="max-w-4xl mx-auto space-y-2">
+          <p className="text-gray-300 font-bold text-sm">소나무디자인</p>
+          <p>
+            인천광역시 미추홀구 인주대로 304 영인빌딩 4층 402호, 405호 &nbsp;|&nbsp; 전화: 032-465-8195 &nbsp;|&nbsp; 이메일: jd0117108195@hanmail.net
+          </p>
+          <p className="text-[11px] text-gray-500 pt-2 font-mont tracking-wider">
+            © {new Date().getFullYear()} SONAMU DESIGN. ALL RIGHTS RESERVED.
+          </p>
+        </div>
       </footer>
     </>
   );

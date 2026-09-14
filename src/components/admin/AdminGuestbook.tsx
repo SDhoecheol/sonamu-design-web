@@ -30,7 +30,7 @@ export default function AdminGuestbook() {
   }, []);
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('정말 이 방명록을 삭제하시겠습니까?')) return;
+    if (!window.confirm('선택한 방명록을 삭제하시겠습니까? (삭제 후 복구할 수 없습니다.)')) return;
 
     const { error } = await supabase.from('ebook_guestbook').delete().eq('id', id);
     if (error) {

@@ -123,7 +123,7 @@ const Portfolio = () => {
               className={`px-4 py-1 border rounded-md text-xs transition-all ${activeSub === 'all' ? 'border-navy-800 text-navy-800 bg-gray-50 font-bold' : 'border-gray-200 text-gray-500 hover:border-navy-800'}`}
               onClick={() => { setActiveSub('all'); setSelectedIndex(null); }}
             >
-              전체보기
+              전체
             </button>
             {activeCategory.sub.map(sub => (
               <button
@@ -137,32 +137,39 @@ const Portfolio = () => {
           </div>
         )}
 
-        <div className="columns-2 md:columns-3 gap-8 lg:gap-12 mt-16 space-y-8 group/grid">
-          {filteredItems.map((item, idx) => (
-            <div 
-              key={`${item.main}-${item.sub}-${idx}`} 
-              onClick={() => setSelectedIndex(idx)}
-              className="break-inside-avoid fade-enter flex flex-col group/card cursor-pointer text-left mb-8 transition-all duration-300 group-hover/grid:opacity-30 hover:!opacity-100 relative hover:z-10 hover:-translate-y-2"
-            >
-              <div className="bg-gray-100 rounded-2xl mb-4 overflow-hidden shadow-sm group-hover/card:shadow-2xl transition-shadow relative">
-                <motion.img 
-                  layoutId={item.image}
-                  src={item.image} 
-                  alt={item.title} 
-                  className="w-full h-auto object-cover group-hover/card:scale-105 transition-transform duration-500" 
-                />
+        {filteredItems.length === 0 ? (
+          <div className="py-24 text-gray-400 text-center">
+            <span className="material-symbols-outlined text-5xl mb-2 text-gray-300 block">inventory_2</span>
+            <p>해당 카테고리에 등록된 포트폴리오가 없습니다.</p>
+          </div>
+        ) : (
+          <div className="columns-2 md:columns-3 gap-8 lg:gap-12 mt-16 space-y-8 group/grid">
+            {filteredItems.map((item, idx) => (
+              <div 
+                key={`${item.main}-${item.sub}-${idx}`} 
+                onClick={() => setSelectedIndex(idx)}
+                className="break-inside-avoid fade-enter flex flex-col group/card cursor-pointer text-left mb-8 transition-all duration-300 group-hover/grid:opacity-30 hover:!opacity-100 relative hover:z-10 hover:-translate-y-2"
+              >
+                <div className="bg-gray-100 rounded-2xl mb-4 overflow-hidden shadow-sm group-hover/card:shadow-2xl transition-shadow relative">
+                  <motion.img 
+                    layoutId={item.image}
+                    src={item.image} 
+                    alt={item.title} 
+                    className="w-full h-auto object-cover group-hover/card:scale-105 transition-transform duration-500" 
+                  />
+                </div>
+                <p className="text-xs font-medium text-gray-500 mb-1 px-1">
+                  {categories[item.main].name}{item.sub ? ` > ${item.sub}` : ''}
+                </p>
+                <p className="font-bold text-base text-navy-900 group-hover/card:text-blue-600 transition-colors px-1">{item.title}</p>
               </div>
-              <p className="text-xs font-medium text-gray-500 mb-1 px-1">
-                {categories[item.main].name}{item.sub ? ` > ${item.sub}` : ''}
-              </p>
-              <p className="font-bold text-base text-navy-900 group-hover/card:text-blue-600 transition-colors px-1">{item.title}</p>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
         
         <div className="mt-20 text-center">
           <p className="text-[11px] text-gray-400 bg-gray-50 border border-gray-100 inline-block px-5 py-2.5 rounded-full">
-            본 페이지의 포트폴리오 썸네일은 소나무디자인의 실제 작업 결과물을 바탕으로 AI 기술을 활용해 연출된 이미지입니다.
+            본 페이지의 포트폴리오 썸네일은 소나무디자인의 실제 작업 결과물을 바탕으로 연출된 이미지입니다.
           </p>
         </div>
       </div>
@@ -203,6 +210,7 @@ const Portfolio = () => {
               {/* Navigation arrows */}
               <div className="absolute inset-y-0 left-2 md:left-8 flex items-center z-20">
                 <button 
+                  aria-label="이전 포트폴리오 보기"
                   className="p-2 md:p-4 bg-white/5 hover:bg-white/20 text-white rounded-full backdrop-blur-md transition-all cursor-pointer border border-white/10 hover:scale-110"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -214,6 +222,7 @@ const Portfolio = () => {
               </div>
               <div className="absolute inset-y-0 right-2 md:right-8 flex items-center z-20">
                 <button 
+                  aria-label="다음 포트폴리오 보기"
                   className="p-2 md:p-4 bg-white/5 hover:bg-white/20 text-white rounded-full backdrop-blur-md transition-all cursor-pointer border border-white/10 hover:scale-110"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -226,6 +235,7 @@ const Portfolio = () => {
               
               {/* Close button */}
               <button 
+                aria-label="포트폴리오 상세 닫기"
                 className="absolute top-4 right-4 md:top-8 md:right-8 z-20 p-2 md:p-3 bg-white/5 hover:bg-white/20 text-white rounded-full backdrop-blur-md transition-all cursor-pointer border border-white/10 hover:rotate-90 hover:scale-110"
                 onClick={() => setSelectedIndex(null)}
               >

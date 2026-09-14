@@ -64,11 +64,11 @@ const Home: React.FC = () => {
             transition={{ duration: 1, ease: "easeOut" }}
           >
             <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-tight tracking-tight mb-8">
-              기획부터 인쇄까지,<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">디자인의 완성</span>을 경험하세요.
+              기획부터 디자인,<br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">직접 인쇄</span>까지.
             </h2>
             <p className="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto font-light tracking-wide">
-              수많은 관공서와 기업이 선택한 인쇄 디자인 파트너
+              공공기관과 기업을 위한 디자인·인쇄 파트너, 소나무디자인입니다.
             </p>
           </motion.div>
         </div>
@@ -84,12 +84,11 @@ const Home: React.FC = () => {
           transition={{ duration: 1 }}
         >
           <h3 className="text-3xl md:text-5xl font-black text-navy-900 leading-tight mb-8">
-            관공서와 기업이 믿고 맡기는<br />
-            프로페셔널 인쇄 디자인 파트너.
+            공공기관과 기업의 업무 기준에 맞춰<br />
+            빠르게 편집 디자인해드립니다.
           </h3>
           <p className="text-gray-500 text-lg md:text-xl leading-relaxed font-medium">
-            까다로운 규격과 엄격한 절차, 대량 인쇄 프로젝트까지.<br />
-            단순한 출력물을 넘어 완벽한 실무 비즈니스 파트너로서 결과물로 증명합니다.
+            기획·편집부터 사내 직접 인쇄까지 책임지고 진행합니다.
           </p>
         </motion.div>
       </div>
@@ -109,9 +108,9 @@ const Home: React.FC = () => {
               <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
                 <span className="material-symbols-outlined text-blue-600">verified</span>
               </div>
-              <h4 className="text-3xl font-bold text-navy-900">원스톱 토탈 케어</h4>
+              <h4 className="text-3xl font-bold text-navy-900">기획부터 납품까지 직접 관리</h4>
               <p className="text-gray-600 text-lg leading-relaxed">
-                여러 업체를 거칠 필요 없이, 기획 단계부터 최종 납품까지 소나무디자인이 책임지고 단일 창구로 관리하여 업무 효율을 극대화합니다.
+                외주 분산 없이 기획, 편집 디자인, 인쇄, 후가공을 사내 단일 창구로 진행하여 제작 일정과 커뮤니케이션을 일원화합니다.
               </p>
             </motion.div>
             <motion.div 
@@ -139,9 +138,9 @@ const Home: React.FC = () => {
               <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
                 <span className="material-symbols-outlined text-blue-600">palette</span>
               </div>
-              <h4 className="text-3xl font-bold text-navy-900">전문 디자인 기획</h4>
+              <h4 className="text-3xl font-bold text-navy-900">기관·기업 맞춤 편집 디자인</h4>
               <p className="text-gray-600 text-lg leading-relaxed">
-                관공서 및 기업의 브랜드 가이드를 완벽하게 이해하고, 트렌드에 맞는 최적의 시각 결과물을 제안하여 품격을 높입니다.
+                CI 가이드라인과 공공 간행물 발간 기준에 맞춰 사업보고서, 백서, 리플렛 등 목적에 부합하는 레이아웃을 제안합니다.
               </p>
             </motion.div>
             <motion.div 
@@ -169,9 +168,9 @@ const Home: React.FC = () => {
               <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
                 <span className="material-symbols-outlined text-blue-600">precision_manufacturing</span>
               </div>
-              <h4 className="text-3xl font-bold text-navy-900">최첨단 설비 보유</h4>
+              <h4 className="text-3xl font-bold text-navy-900">자체 디지털 인쇄 및 후가공 설비</h4>
               <p className="text-gray-600 text-lg leading-relaxed">
-                디지털 프레스와 대형 실사 출력기 등 최신 설비를 자체적으로 보유하여 오차 없는 퀄리티와 빠른 납기를 보장합니다.
+                코니카 미놀타 디지털 프레스 4대(컬러 2대·고속 흑백 2대)와 대형 플로터, 오시기·코팅기·제본기 등 후가공 장비를 직접 운용하여 일정에 차질 없이 제작합니다.
               </p>
             </motion.div>
             <motion.div 
@@ -198,14 +197,14 @@ const Home: React.FC = () => {
           transition={{ duration: 1 }}
         >
           <h3 className="text-3xl md:text-5xl font-black text-white mb-6">
-            결과물로 증명하는 퀄리티
+            주요 제작 사례
           </h3>
           <p className="text-zinc-400 text-lg mb-16">
-            마우스를 드래그하여 소나무디자인의 대표 작업물들을 확인해 보세요.
+            소나무디자인에서 기획·인쇄한 공공기관 및 기업 인쇄물입니다.
           </p>
           
           <div className="max-w-6xl mx-auto flex justify-center">
-            <CardSlider cards={deckCards} label="PORTFOLIO HIGHLIGHTS" />
+            <CardSlider cards={deckCards} label="PORTFOLIO" />
           </div>
         </motion.div>
       </div>
@@ -219,14 +218,14 @@ const Home: React.FC = () => {
           transition={{ duration: 1 }}
         >
           <h3 className="text-2xl md:text-4xl font-bold text-white leading-relaxed mb-10">
-            디자인은 본질을 드러내는 작업입니다.<br />
-            소나무디자인은 오늘도 기본에 충실합니다.
+            인쇄물 제작 상담 및 일정 문의<br />
+            <span className="text-gray-400 text-lg md:text-xl font-normal">사업보고서, 리플렛, 간행물 등 필요하신 사양과 일정을 문의해 주세요.</span>
           </h3>
           <button 
             onClick={() => navigate('/portfolio')}
             className="px-8 py-4 bg-white text-navy-900 rounded-xl font-bold hover:bg-gray-100 transition-colors inline-flex items-center gap-2 shadow-xl"
           >
-            소나무디자인의 작업물 보러가기 <span className="material-symbols-outlined">arrow_forward</span>
+            전체 포트폴리오 보러가기 <span className="material-symbols-outlined">arrow_forward</span>
           </button>
         </motion.div>
       </div>

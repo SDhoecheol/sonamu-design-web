@@ -15,7 +15,7 @@ const Header: React.FC = () => {
       <div className="max-w-7xl mx-auto px-6 py-5 flex flex-col items-center">
         <Link to="/" className="text-center mb-5 cursor-pointer hover:opacity-80 transition-opacity block">
           <h1 className="font-mont font-bold text-2xl tracking-wider">SONAMU<span className="text-blue-400">.</span></h1>
-          <p className="text-[10px] text-gray-400 tracking-widest uppercase">Design & Printing Solution</p>
+          <p className="text-[10px] text-gray-400 tracking-widest">기획 · 편집디자인 · 직접인쇄</p>
         </Link>
         <nav>
           <ul className="flex flex-wrap justify-center items-center gap-4 md:gap-10">

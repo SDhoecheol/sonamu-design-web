@@ -197,11 +197,11 @@ export default function EbookViewerPage() {
               type="submit"
               className="w-full bg-navy-900 text-white p-4 rounded-lg font-bold hover:bg-navy-800 transition-colors"
             >
-              확인 및 열람하기
+              확인
             </button>
           </form>
           <div className="mt-8 pt-6 border-t border-gray-100">
-            <p className="text-xs text-gray-400">SONAMU DESIGN SECURE VIEWER</p>
+            <p className="text-xs text-gray-400 font-medium">소나무디자인 전자책 뷰어</p>
           </div>
         </div>
       </div>
@@ -250,7 +250,7 @@ export default function EbookViewerPage() {
               onClick={handleKeepReading}
               className="group flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-8 py-4 rounded-full transition-all backdrop-blur-md cursor-pointer"
             >
-              <span className="font-medium">E북 계속 읽기</span>
+              <span className="font-medium">계속 읽기</span>
               <span className="material-symbols-outlined text-sm">menu_book</span>
             </button>
           </div>
@@ -260,11 +260,12 @@ export default function EbookViewerPage() {
       {/* 방명록 플로팅 버튼 */}
       <button
         onClick={() => setShowGuestbook(true)}
+        aria-label="방명록 열기"
         className="absolute bottom-3 right-3 sm:bottom-8 sm:right-8 z-40 bg-navy-900/90 backdrop-blur-sm text-white px-3 py-2 sm:px-6 sm:py-4 rounded-full shadow-lg sm:shadow-2xl hover:bg-navy-900 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 group"
         style={{ opacity: showOutro ? 0 : 1, pointerEvents: showOutro ? 'none' : 'auto' }}
       >
         <span className="material-symbols-outlined text-base sm:text-2xl group-hover:animate-pulse">chat_bubble</span>
-        <span className="font-bold text-[11px] sm:text-base whitespace-nowrap">방명록 남기기</span>
+        <span className="font-bold text-[11px] sm:text-base whitespace-nowrap">방명록</span>
         {guestbookEntries.length > 0 && (
           <span className="bg-white text-navy-900 px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-bold shadow-inner">
             {guestbookEntries.length}
@@ -293,6 +294,7 @@ export default function EbookViewerPage() {
           </div>
           <button 
             onClick={() => setShowGuestbook(false)}
+            aria-label="방명록 닫기"
             className="hover:bg-white/10 p-1 rounded transition-colors"
           >
             <span className="material-symbols-outlined">close</span>
@@ -304,7 +306,7 @@ export default function EbookViewerPage() {
           {guestbookEntries.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-gray-400 opacity-70">
               <span className="material-symbols-outlined text-5xl mb-2">forum</span>
-              <p>첫 번째 방명록을 남겨보세요!</p>
+              <p>등록된 방명록이 없습니다.</p>
             </div>
           ) : (
             guestbookEntries.map((entry) => (
@@ -329,7 +331,7 @@ export default function EbookViewerPage() {
           <form onSubmit={handleSubmitGuestbook} className="flex flex-col gap-3">
             <input
               type="text"
-              placeholder="이름 (닉네임)"
+              placeholder="작성자 성명 (또는 닉네임)"
               value={gbAuthor}
               onChange={(e) => setGbAuthor(e.target.value)}
               className="w-full p-2 border border-gray-200 rounded text-sm focus:outline-none focus:border-navy-500 focus:ring-1 focus:ring-navy-500"
@@ -338,7 +340,7 @@ export default function EbookViewerPage() {
             />
             <div className="relative">
               <textarea
-                placeholder="감상평을 남겨주세요..."
+                placeholder="내용을 입력하세요..."
                 value={gbContent}
                 onChange={(e) => setGbContent(e.target.value)}
                 className="w-full p-2 border border-gray-200 rounded text-sm resize-none focus:outline-none focus:border-navy-500 focus:ring-1 focus:ring-navy-500 pr-12"
@@ -348,6 +350,7 @@ export default function EbookViewerPage() {
               <button
                 type="submit"
                 disabled={isSubmittingGb}
+                aria-label="방명록 등록"
                 className="absolute bottom-2 right-2 w-8 h-8 bg-navy-900 text-white rounded-full flex items-center justify-center hover:bg-navy-800 disabled:bg-gray-400 transition-colors"
               >
                 <span className="material-symbols-outlined text-sm">send</span>
