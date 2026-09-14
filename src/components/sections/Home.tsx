@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'motion/react';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import { CardSlider, type DeckCard } from '../ui/card-slider';
 import { Buildings, CloudSun as Mountains, Sunset as SunHorizon, Leaf as Tree, Soundwave as Waves } from "@solar-icons/react";
@@ -49,51 +49,144 @@ const deckCards: DeckCard[] = [
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
+  const heroRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end end"]
+  });
+
+  // Step 2: Scale text mask from 1.0 to 18.0 across 0% -> 45% of sticky scroll
+  const textScale = useTransform(scrollYProgress, [0, 0.45], [1, 18]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.38, 0.46], [1, 1, 0]);
+
+  // Full-screen image reveals as text zooms in
+  const bgImageOpacity = useTransform(scrollYProgress, [0.22, 0.45], [0, 1]);
+
+  // Step 3: Dark overlay reveals (45% -> 60%)
+  const overlayOpacity = useTransform(scrollYProgress, [0.45, 0.6], [0, 0.75]);
+
+  // Step 3: Slogan fades in and moves up (48% -> 65%) and stays until transition out (88% -> 98%)
+  const sloganOpacity = useTransform(scrollYProgress, [0.48, 0.65, 0.88, 0.98], [0, 1, 1, 0]);
+  const sloganY = useTransform(scrollYProgress, [0.48, 0.65], [40, 0]);
+
+  // Scroll down prompt indicator (fades out early)
+  const scrollPromptOpacity = useTransform(scrollYProgress, [0, 0.08], [1, 0]);
 
   return (
     <section id="home" className="tab-content active bg-white">
       
-      {/* SCROLL 0: Hero Section */}
-      <div className="relative w-full h-screen min-h-[600px] overflow-hidden">
-        <img src="images/hero.png" alt="소나무디자인 작업공간" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-navy-900/80"></div>
-        <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: "easeOut" }}
+      {/* 1. Cinematic Text-Mask Zoom-In Hero Track (Sticky 300vh) */}
+      <div ref={heroRef} className="relative h-[300vh] bg-white">
+        <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center">
+          
+          {/* Layer 1: Revealed Full-Screen Studio Visual */}
+          <motion.div 
+            style={{ opacity: bgImageOpacity }}
+            className="absolute inset-0 w-full h-full pointer-events-none"
           >
-            <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-tight tracking-tight mb-8">
-              기획부터 디자인,<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">직접 인쇄</span>까지.
+            <img 
+              src="/images/hero.png" 
+              alt="소나무디자인 인쇄 스튜디오 실사" 
+              className="w-full h-full object-cover" 
+            />
+          </motion.div>
+
+          {/* Layer 2: Dark Tint Overlay */}
+          <motion.div 
+            style={{ opacity: overlayOpacity }}
+            className="absolute inset-0 bg-navy-950/80 pointer-events-none"
+          />
+
+          {/* Layer 3: Text Mask Zoom-In (0% -> 45%) */}
+          <motion.div 
+            style={{ scale: textScale, opacity: textOpacity }}
+            className="relative z-10 flex flex-col items-center justify-center text-center select-none transform-gpu origin-center pointer-events-none px-4"
+          >
+            <h1 
+              className="font-mont font-black tracking-tighter leading-[0.88] text-center uppercase"
+              style={{
+                fontSize: 'clamp(3.8rem, 15vw, 13rem)',
+                backgroundImage: 'url(/images/hero.png)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                WebkitBackgroundClip: 'text',
+                backgroundClip: 'text',
+                color: 'transparent',
+              }}
+            >
+              SONAMU<br />DESIGN
+            </h1>
+          </motion.div>
+
+          {/* Layer 4: Cinematic Slogan Reveal (45% -> 85%) */}
+          <motion.div 
+            style={{ opacity: sloganOpacity, y: sloganY }}
+            className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-6 pointer-events-none"
+          >
+            <span className="text-xs md:text-sm font-bold tracking-[0.25em] text-blue-400 uppercase mb-4 font-mont">
+              DESIGN &amp; PRINTING SOLUTION
+            </span>
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight mb-6">
+              공공기관과 기업의 업무 기준에 맞춰<br className="hidden sm:block" />
+              빠르게 편집 디자인해드립니다.
             </h2>
-            <p className="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto font-light tracking-wide">
-              공공기관과 기업을 위한 디자인·인쇄 파트너, 소나무디자인입니다.
+            <p className="text-gray-300 text-base md:text-xl font-medium tracking-wide max-w-2xl leading-relaxed">
+              기획·편집부터 사내 직접 인쇄까지 책임지고 진행합니다.
             </p>
           </motion.div>
+
+          {/* Scroll Down Prompt Indicator (Scroll 0%) */}
+          <motion.div 
+            style={{ opacity: scrollPromptOpacity }}
+            className="absolute bottom-8 z-20 flex flex-col items-center gap-2 pointer-events-none"
+          >
+            <span className="text-[11px] font-mont font-bold text-gray-400 tracking-[0.2em] uppercase">
+              Scroll Down
+            </span>
+            <span className="material-symbols-outlined text-gray-400 animate-bounce text-xl">
+              keyboard_arrow_down
+            </span>
+          </motion.div>
+
         </div>
       </div>
 
-      {/* SCROLL 1: Our Philosophy (B2B/B2G Focus) */}
-      <div className="w-full bg-white py-40 px-6">
-        <motion.div 
-          className="max-w-4xl mx-auto text-center"
-          initial={{ opacity: 0, y: 40 }}
+      {/* 2. Step 4: Portfolio Showcase (OUR PROJECTS) */}
+      <div className="w-full bg-zinc-950 py-32 overflow-hidden text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, margin: "-100px" }}
           transition={{ duration: 1 }}
         >
-          <h3 className="text-3xl md:text-5xl font-black text-navy-900 leading-tight mb-8">
-            공공기관과 기업의 업무 기준에 맞춰<br />
-            빠르게 편집 디자인해드립니다.
-          </h3>
-          <p className="text-gray-500 text-lg md:text-xl leading-relaxed font-medium">
-            기획·편집부터 사내 직접 인쇄까지 책임지고 진행합니다.
-          </p>
+          <div className="mb-14">
+            <span className="text-xs md:text-sm font-bold tracking-[0.25em] text-blue-400 uppercase block mb-3 font-mont">
+              OUR PROJECTS
+            </span>
+            <h3 className="text-3xl md:text-5xl font-black text-white mb-4">
+              주요 제작 사례
+            </h3>
+            <p className="text-zinc-400 text-base md:text-lg max-w-xl mx-auto">
+              소나무디자인에서 기획·인쇄한 공공기관 및 기업 인쇄물입니다.
+            </p>
+          </div>
+          
+          <div className="max-w-6xl mx-auto flex justify-center mb-14">
+            <CardSlider cards={deckCards} label="PORTFOLIO" />
+          </div>
+
+          <button 
+            onClick={() => navigate('/portfolio')}
+            className="px-8 py-4 bg-white hover:bg-gray-100 text-navy-900 rounded-full font-bold transition-all inline-flex items-center gap-2 shadow-xl hover:-translate-y-0.5 cursor-pointer"
+          >
+            <span>전체 포트폴리오 보러가기</span>
+            <span className="material-symbols-outlined text-lg">arrow_forward</span>
+          </button>
         </motion.div>
       </div>
 
-      {/* SCROLL 2: Core Competencies (Z-Pattern Layout) */}
+      {/* 3. Core Competencies (Z-Pattern Layout) */}
       <div className="w-full bg-gray-50 py-32 overflow-hidden">
         <div className="max-w-6xl mx-auto px-6">
           {/* Item 1 */}
@@ -188,28 +281,7 @@ const Home: React.FC = () => {
         </div>
       </div>
 
-      {/* SCROLL 3: Portfolio Teaser (Card Slider) */}
-      <div className="w-full bg-zinc-950 py-32 overflow-hidden text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, margin: "-100px" }}
-          transition={{ duration: 1 }}
-        >
-          <h3 className="text-3xl md:text-5xl font-black text-white mb-6">
-            주요 제작 사례
-          </h3>
-          <p className="text-zinc-400 text-lg mb-16">
-            소나무디자인에서 기획·인쇄한 공공기관 및 기업 인쇄물입니다.
-          </p>
-          
-          <div className="max-w-6xl mx-auto flex justify-center">
-            <CardSlider cards={deckCards} label="PORTFOLIO" />
-          </div>
-        </motion.div>
-      </div>
-
-      {/* SCROLL 4: Outro CTA (No hard selling, just link to Portfolio) */}
+      {/* 4. Outro CTA */}
       <div className="w-full bg-navy-900 py-32 text-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
