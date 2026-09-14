@@ -22,11 +22,11 @@ const deckCards: DeckCard[] = [
   },
   {
     id: "event-poster",
-    title: "자원순환센터 견학 현수막",
+    title: "우리동네 시청 현수막",
     location: "대형 실사 출력",
     tag: "행사",
     tagIcon: <Waves size={14} weight="Bold" className="text-zinc-900" />,
-    imageSrc: "/images/portfolio/자원순환센터 선진시설견학 현수막 (2023년).jpg",
+    imageSrc: "/images/portfolio/인천광역시_우리동네시청_현수막.jpg",
   },
   {
     id: "brand-package",

@@ -14,12 +14,12 @@ const DRAG_SENSITIVITY = 130;
 const FLING_PROJECTION = 0.18;
 const AUTO_ADVANCE_MS = 3200;
 
-/* Heavy-deck settle: low stiffness + extra mass so releases carry weight. */
+/* Crisp snappy settle: optimized for high fps responsiveness */
 const SETTLE_SPRING = {
   type: "spring" as const,
-  stiffness: 150,
-  damping: 23,
-  mass: 1.15,
+  stiffness: 220,
+  damping: 26,
+  mass: 1.0,
 };
 
 const TAP_SPRING = { type: "spring" as const, stiffness: 420, damping: 30 };
@@ -30,24 +30,23 @@ interface PositionConfig {
   y: number;
   scale: number;
   zIndex: number;
-  blur: number;
   dim: number;
 }
 
 const desktopPositions: Record<string, PositionConfig> = {
-  "-2": { rotate: -18, x: -300, y: 44, scale: 0.74, zIndex: 1, blur: 4, dim: 0.55 },
-  "-1": { rotate: -9, x: -160, y: 16, scale: 0.86, zIndex: 2, blur: 1.5, dim: 0.3 },
-  "0": { rotate: 0, x: 0, y: -14, scale: 1, zIndex: 5, blur: 0, dim: 0 },
-  "1": { rotate: 9, x: 160, y: 16, scale: 0.86, zIndex: 2, blur: 1.5, dim: 0.3 },
-  "2": { rotate: 18, x: 300, y: 44, scale: 0.74, zIndex: 1, blur: 4, dim: 0.55 },
+  "-2": { rotate: -18, x: -300, y: 44, scale: 0.74, zIndex: 1, dim: 0.55 },
+  "-1": { rotate: -9, x: -160, y: 16, scale: 0.86, zIndex: 2, dim: 0.3 },
+  "0": { rotate: 0, x: 0, y: -14, scale: 1, zIndex: 5, dim: 0 },
+  "1": { rotate: 9, x: 160, y: 16, scale: 0.86, zIndex: 2, dim: 0.3 },
+  "2": { rotate: 18, x: 300, y: 44, scale: 0.74, zIndex: 1, dim: 0.55 },
 };
 
 const mobilePositions: Record<string, PositionConfig> = {
-  "-2": { rotate: -16, x: -122, y: 26, scale: 0.56, zIndex: 1, blur: 3, dim: 0.55 },
-  "-1": { rotate: -8, x: -66, y: 10, scale: 0.7, zIndex: 2, blur: 1.2, dim: 0.3 },
-  "0": { rotate: 0, x: 0, y: -8, scale: 0.84, zIndex: 5, blur: 0, dim: 0 },
-  "1": { rotate: 8, x: 66, y: 10, scale: 0.7, zIndex: 2, blur: 1.2, dim: 0.3 },
-  "2": { rotate: 16, x: 122, y: 26, scale: 0.56, zIndex: 1, blur: 3, dim: 0.55 },
+  "-2": { rotate: -16, x: -122, y: 26, scale: 0.56, zIndex: 1, dim: 0.55 },
+  "-1": { rotate: -8, x: -66, y: 10, scale: 0.7, zIndex: 2, dim: 0.3 },
+  "0": { rotate: 0, x: 0, y: -8, scale: 0.84, zIndex: 5, dim: 0 },
+  "1": { rotate: 8, x: 66, y: 10, scale: 0.7, zIndex: 2, dim: 0.3 },
+  "2": { rotate: 16, x: 122, y: 26, scale: 0.56, zIndex: 1, dim: 0.55 },
 };
 
 function interpolatePosition(
@@ -121,7 +120,6 @@ function SliderCard({ card, index, viewProgress, didDrag, isMobile }: SliderCard
   const rotate = useTransform(viewProgress, at("rotate"));
   const scale = useTransform(viewProgress, at("scale"));
   const dim = useTransform(viewProgress, at("dim"));
-  const filter = useTransform(viewProgress, (v) => `blur(${at("blur")(v).toFixed(2)}px)`);
   const zIndex = useTransform(viewProgress, (v) =>
     positions[String(Math.round(Math.max(-2, Math.min(2, circularOffset(index, v)))))].zIndex,
   );
@@ -133,13 +131,13 @@ function SliderCard({ card, index, viewProgress, didDrag, isMobile }: SliderCard
 
   return (
     <motion.div
-      className="absolute touch-none"
-      style={{ x, y, rotate, scale, zIndex, filter }}
+      className="absolute touch-none transform-gpu will-change-transform"
+      style={{ x, y, rotate, scale, zIndex }}
       onClick={handleClick}
     >
       <div
         className={cn(
-          "relative rounded-[1.75rem] bg-white p-[5px] shadow-2xl shadow-black/50",
+          "relative rounded-[1.75rem] bg-white p-[5px] shadow-2xl shadow-black/50 [backface-visibility:hidden] [transform:translateZ(0)]",
           isMobile ? "h-52 w-36" : "h-80 w-56",
         )}
       >
@@ -148,10 +146,12 @@ function SliderCard({ card, index, viewProgress, didDrag, isMobile }: SliderCard
             src={card.imageSrc}
             alt={card.title}
             draggable={false}
-            className="h-full w-full object-cover"
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full object-cover pointer-events-none"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
-          <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full bg-white/90 px-2.5 py-1.5 shadow-sm backdrop-blur">
+          <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full bg-white/90 px-2.5 py-1.5 shadow-sm">
             {card.tagIcon}
             <span className="text-[13px] leading-none font-semibold text-zinc-900">
               {card.tag}
@@ -196,6 +196,8 @@ interface CardSliderProps {
  * @param {string} label - Eyebrow text + accessible carousel name [Optional, default: "Field atlas"]
  */
 export function CardSlider({ cards, label = "PORTFOLIO" }: CardSliderProps) {
+  const containerRef = useRef<HTMLElement>(null);
+  const [isInView, setIsInView] = useState(false);
   const viewProgress = useMotionValue(0);
   const startX = useRef<number | null>(null);
   const startValue = useRef<number | null>(null);
@@ -211,6 +213,16 @@ export function CardSlider({ cards, label = "PORTFOLIO" }: CardSliderProps) {
   });
 
   useEffect(() => {
+    const node = containerRef.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsInView(entry.isIntersecting);
+    }, { threshold: 0.05 });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
     const mql = window.matchMedia("(max-width: 639px)");
     setIsMobile(mql.matches);
     const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
@@ -218,15 +230,15 @@ export function CardSlider({ cards, label = "PORTFOLIO" }: CardSliderProps) {
     return () => mql.removeEventListener("change", handler);
   }, []);
 
-  /* Idle drift: client-only interval, cleared while the deck is engaged. */
+  /* Idle drift: runs ONLY when the deck is visible in viewport and not engaged */
   useEffect(() => {
-    if (isEngaged) return;
+    if (isEngaged || !isInView) return;
     const id = window.setInterval(() => {
       if (startX.current !== null) return;
       animate(viewProgress, Math.round(viewProgress.get()) + 1, SETTLE_SPRING);
     }, AUTO_ADVANCE_MS);
     return () => window.clearInterval(id);
-  }, [isEngaged, viewProgress]);
+  }, [isEngaged, isInView, viewProgress]);
 
   function cycle(direction: -1 | 1) {
     animate(viewProgress, Math.round(viewProgress.get()) + direction, SETTLE_SPRING);
@@ -270,6 +282,7 @@ export function CardSlider({ cards, label = "PORTFOLIO" }: CardSliderProps) {
 
   return (
     <section
+      ref={containerRef}
       aria-roledescription="carousel"
       aria-label={label}
       className="flex w-full flex-col items-center gap-2 select-none"
