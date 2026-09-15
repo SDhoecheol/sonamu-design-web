@@ -191,11 +191,14 @@ const Home: React.FC = () => {
       <div ref={heroRef} className="relative h-[320vh] bg-white">
         <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-white">
           
-          {/* Layer 1: 고화질 인쇄 스튜디오 실사 비주얼 (캔버스 구멍을 통해 선명하게 드러남) */}
+          {/* Layer 1: 고화질 인쇄 스튜디오 실사 영상 (캔버스 구멍을 통해 역동적으로 드러남) */}
           <div className="absolute inset-0 w-full h-full pointer-events-none">
-            <img 
-              src="/images/hero.png" 
-              alt="소나무디자인 인쇄 스튜디오 실사" 
+            <video 
+              src="/videos/hero_main.mp4" 
+              autoPlay 
+              loop 
+              muted 
+              playsInline 
               className="w-full h-full object-cover" 
             />
           </div>
@@ -222,12 +225,11 @@ const Home: React.FC = () => {
             <span className="text-xs md:text-sm font-bold tracking-[0.25em] text-blue-400 uppercase mb-4 font-mont">
               DESIGN &amp; PRINTING SOLUTION
             </span>
-            <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight mb-6">
-              공공기관과 기업의 업무 기준에 맞춰<br className="hidden sm:block" />
-              빠르게 편집 디자인해드립니다.
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight mb-4">
+              기획부터 직접 인쇄까지.
             </h2>
             <p className="text-gray-300 text-base md:text-xl font-medium tracking-wide max-w-2xl leading-relaxed">
-              기획·편집부터 사내 직접 인쇄까지 책임지고 진행합니다.
+              관공서 · 기업 인쇄 전문
             </p>
           </div>
 
@@ -235,6 +237,7 @@ const Home: React.FC = () => {
           <div 
             ref={promptRef}
             className="absolute bottom-8 z-20 flex flex-col items-center gap-2 pointer-events-none transition-opacity duration-150"
+            style={{ opacity: 1 }}
           >
             <span className="text-[11px] font-mont font-bold text-gray-400 tracking-[0.2em] uppercase">
               Scroll Down
@@ -257,7 +260,7 @@ const Home: React.FC = () => {
             주요 제작 사례
           </h3>
           <p className="text-zinc-400 text-base md:text-lg max-w-xl mx-auto px-4">
-            소나무디자인에서 기획·인쇄한 공공기관 및 기업 인쇄물입니다.
+            공공기관 및 기업 납품 실적입니다.
           </p>
         </div>
         
