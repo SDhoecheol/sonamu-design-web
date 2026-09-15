@@ -53,6 +53,7 @@ const Home: React.FC = () => {
   const overlayRef = useRef<HTMLDivElement>(null);
   const sloganRef = useRef<HTMLDivElement>(null);
   const promptRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const animFrameRef = useRef<number | null>(null);
 
   const drawTextWithTracking = (
@@ -177,6 +178,12 @@ const Home: React.FC = () => {
     handleScroll();
     document.fonts.ready.then(() => handleScroll());
 
+    if (videoRef.current) {
+      videoRef.current.defaultMuted = true;
+      videoRef.current.muted = true;
+      videoRef.current.play().catch(() => {});
+    }
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleScroll);
@@ -194,11 +201,14 @@ const Home: React.FC = () => {
           {/* Layer 1: 고화질 인쇄 스튜디오 실사 영상 (캔버스 구멍을 통해 역동적으로 드러남) */}
           <div className="absolute inset-0 w-full h-full pointer-events-none">
             <video 
+              ref={videoRef}
               src="/videos/hero_main.mp4" 
+              poster="/images/hero.png"
               autoPlay 
               loop 
               muted 
               playsInline 
+              preload="auto"
               className="w-full h-full object-cover" 
             />
           </div>
