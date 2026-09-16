@@ -22,7 +22,7 @@ const Header: React.FC = () => {
             SONAMU<span className="text-blue-600">.</span>
           </span>
           <span className="hidden sm:inline-block text-[11px] font-medium text-gray-400 pl-3 border-l border-gray-200 tracking-wider">
-            기획 · 편집디자인 · 직접인쇄
+            기획 · 디자인 · 인쇄
           </span>
         </Link>
 

@@ -145,9 +145,9 @@ const Home: React.FC = () => {
       animFrameRef.current = requestAnimationFrame(() => {
         renderCanvas(progress);
 
-        // 어두운 틴트 오버레이 (0.40 -> 0.60 구간에서 최대 0.75까지 서서히 어두워짐)
+        // 어두운 틴트 오버레이 (상시 0.45 베이스로 밝은 화면 완화 + 슬로건 구간에서 최대 0.70까지 깊어짐)
         if (overlayRef.current) {
-          const ov = Math.min(0.75, Math.max(0, (progress - 0.40) / 0.20) * 0.75);
+          const ov = 0.45 + Math.min(0.25, Math.max(0, (progress - 0.35) / 0.25) * 0.25);
           overlayRef.current.style.opacity = String(ov);
         }
 
@@ -217,7 +217,7 @@ const Home: React.FC = () => {
           <div 
             ref={overlayRef}
             className="absolute inset-0 bg-navy-950 pointer-events-none transition-opacity duration-150"
-            style={{ opacity: 0 }}
+            style={{ opacity: 0.45 }}
           />
 
           {/* Layer 3: HTML5 Canvas 마스크 (화이트 배경 + SONAMU DESIGN 구멍 펀칭) */}
@@ -232,14 +232,11 @@ const Home: React.FC = () => {
             className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-6 pointer-events-none"
             style={{ opacity: 0, transform: 'translateY(30px)' }}
           >
-            <span className="text-xs md:text-sm font-bold tracking-[0.25em] text-blue-400 uppercase mb-4 font-mont">
-              DESIGN &amp; PRINTING SOLUTION
-            </span>
-            <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight mb-4">
-              기획부터 직접 인쇄까지.
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight tracking-tight mb-5 drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]">
+              기획부터 디자인 그리고 인쇄까지.
             </h2>
-            <p className="text-gray-300 text-base md:text-xl font-medium tracking-wide max-w-2xl leading-relaxed">
-              관공서 · 기업 인쇄 전문
+            <p className="text-white/95 text-lg sm:text-xl md:text-2xl font-semibold tracking-wide max-w-2xl leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.85)]">
+              보고서, 간행물, 홍보물 제작
             </p>
           </div>
 
@@ -260,17 +257,14 @@ const Home: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. 주요 제작 사례 (OUR PROJECTS Card Slider) */}
+      {/* 2. 소나무디자인 포트폴리오 (Card Slider) */}
       <div className="w-full bg-zinc-950 py-28 overflow-hidden text-center">
         <div className="mb-14">
-          <span className="text-xs md:text-sm font-bold tracking-[0.25em] text-blue-400 uppercase block mb-3 font-mont">
-            OUR PROJECTS
-          </span>
           <h3 className="text-3xl md:text-5xl font-black text-white mb-4">
-            주요 제작 사례
+            소나무디자인 포트폴리오
           </h3>
           <p className="text-zinc-400 text-base md:text-lg max-w-xl mx-auto px-4">
-            공공기관 및 기업 납품 실적입니다.
+            공공기관 및 기업 납품 사례
           </p>
         </div>
         
