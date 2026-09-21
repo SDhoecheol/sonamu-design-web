@@ -6,9 +6,7 @@ const Header: React.FC = () => {
 
   const menuItems = [
     { path: '/', label: '홈' },
-    { path: '/services', label: '서비스 안내' },
     { path: '/portfolio', label: '포트폴리오' },
-    { path: '/equipment', label: '보유 장비' },
     { path: '/contact', label: '오시는 길' }
   ];
 
@@ -19,7 +17,7 @@ const Header: React.FC = () => {
         {/* Left: Brand Logo */}
         <Link to="/" className="flex items-center gap-3 cursor-pointer group" onClick={() => setMobileMenuOpen(false)}>
           <span className="font-mont font-black text-2xl sm:text-3xl tracking-tighter text-zinc-950 group-hover:opacity-90 transition-opacity">
-            SONAMU<span className="text-blue-600">.</span>
+            SONAMU<span className="text-emerald-700">.</span>
           </span>
           <span className="hidden sm:inline-block text-[11px] font-medium text-gray-400 pl-3 border-l border-gray-200 tracking-wider">
             기획 · 디자인 · 인쇄
@@ -35,7 +33,7 @@ const Header: React.FC = () => {
               className={({ isActive }) =>
                 `text-[15px] tracking-tight transition-colors py-1 ${
                   isActive
-                    ? 'text-blue-600 font-bold border-b-2 border-blue-600'
+                    ? 'text-emerald-800 font-bold border-b-2 border-emerald-700'
                     : 'text-zinc-600 hover:text-zinc-950 font-medium'
                 }`
               }
@@ -69,7 +67,7 @@ const Header: React.FC = () => {
                   className={({ isActive }) =>
                     `block py-2 text-base ${
                       isActive
-                        ? 'text-blue-600 font-bold'
+                        ? 'text-emerald-800 font-bold'
                         : 'text-zinc-700 hover:text-zinc-950 font-medium'
                     }`
                   }
