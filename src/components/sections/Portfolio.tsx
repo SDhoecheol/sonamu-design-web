@@ -99,6 +99,7 @@ const Portfolio = () => {
   return (
     <section id="portfolio" className="tab-content active fade-enter px-6 py-20">
       <div className="max-w-7xl mx-auto text-center">
+        <h1 className="sr-only">소나무디자인 포트폴리오</h1>
         <div className="flex flex-wrap justify-center gap-2 mb-4">
           <button
             className={`px-5 py-2 text-sm font-bold transition-all border-b-2 ${activeMain === 'all' ? 'border-navy-900 text-navy-900' : 'border-transparent text-gray-500 hover:text-navy-900'}`}
@@ -146,22 +147,23 @@ const Portfolio = () => {
           <div className="columns-2 md:columns-3 gap-8 lg:gap-12 mt-16 space-y-8 group/grid">
             {filteredItems.map((item, idx) => (
               <div 
-                key={`${item.main}-${item.sub}-${idx}`} 
+                key={item.id || `${item.main}-${item.title}`} 
                 onClick={() => setSelectedIndex(idx)}
                 className="break-inside-avoid fade-enter flex flex-col group/card cursor-pointer text-left mb-8 transition-all duration-300 group-hover/grid:opacity-30 hover:!opacity-100 relative hover:z-10 hover:-translate-y-2"
               >
                 <div className="bg-gray-100 rounded-2xl mb-4 overflow-hidden shadow-sm group-hover/card:shadow-2xl transition-shadow relative">
-                  <motion.img 
-                    layoutId={item.image}
+                  <img 
                     src={item.image} 
                     alt={item.title} 
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-auto object-cover group-hover/card:scale-105 transition-transform duration-500" 
                   />
                 </div>
                 <p className="text-xs font-medium text-gray-500 mb-1 px-1">
                   {categories[item.main].name}{item.sub ? ` > ${item.sub}` : ''}
                 </p>
-                <p className="font-bold text-base text-navy-900 group-hover/card:text-blue-600 transition-colors px-1">{item.title}</p>
+                <h2 className="font-bold text-base text-navy-900 group-hover/card:text-emerald-700 transition-colors px-1">{item.title}</h2>
               </div>
             ))}
           </div>
@@ -188,7 +190,10 @@ const Portfolio = () => {
               />
               
               <motion.div 
-                layoutId={displayItem.image}
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.2 }}
                 className="relative z-10 max-w-6xl w-full h-full flex flex-col items-center justify-center pointer-events-none"
               >
                 <img 

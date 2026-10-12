@@ -33,9 +33,9 @@ const Contact = () => {
     <section id="contact" className="tab-content fade-enter bg-gray-50 py-20">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-14">
-          <h2 className="text-3xl sm:text-4xl font-black text-zinc-950 tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-black text-zinc-950 tracking-tight">
             오시는 길 및 문의
-          </h2>
+          </h1>
           <p className="text-zinc-500 mt-2.5 text-sm sm:text-base">
             방문 감리 및 인쇄 상담은 사전 연락 주시면 담당자가 준비하여 안내해 드립니다.
           </p>
@@ -49,7 +49,7 @@ const Contact = () => {
             <div className="bg-white p-5 sm:p-6 rounded-xl shadow-xs border border-zinc-200/80 hover:border-emerald-200 transition-colors [word-break:keep-all]">
               <div className="flex items-center gap-2 mb-2.5 text-emerald-700">
                 <span className="material-symbols-outlined text-xl">location_on</span>
-                <h3 className="font-bold text-zinc-950 text-base">위치 및 주차</h3>
+                <h2 className="font-bold text-zinc-950 text-base">위치 및 주차</h2>
               </div>
               <div className="text-sm text-zinc-600 leading-relaxed space-y-1">
                 <p>인천광역시 미추홀구 인주대로 304 영인빌딩 4층 402호, 405호</p>
@@ -65,7 +65,7 @@ const Contact = () => {
             <div className="bg-white p-5 sm:p-6 rounded-xl shadow-xs border border-zinc-200/80 hover:border-emerald-200 transition-colors [word-break:keep-all]">
               <div className="flex items-center gap-2 mb-2.5 text-emerald-700">
                 <span className="material-symbols-outlined text-xl">directions_bus</span>
-                <h3 className="font-bold text-zinc-950 text-base">대중교통 이용</h3>
+                <h2 className="font-bold text-zinc-950 text-base">대중교통 이용</h2>
               </div>
               <div className="space-y-1.5 text-sm text-zinc-600 leading-relaxed">
                 <p><span className="font-bold text-zinc-800">석락아파트 정류장:</span> 도보 1분</p>
@@ -78,7 +78,7 @@ const Contact = () => {
             <div className="bg-white p-5 sm:p-6 rounded-xl shadow-xs border border-zinc-200/80 hover:border-emerald-200 transition-colors [word-break:keep-all]">
               <div className="flex items-center gap-2 mb-2.5 text-emerald-700">
                 <span className="material-symbols-outlined text-xl">schedule</span>
-                <h3 className="font-bold text-zinc-950 text-base">업무 시간</h3>
+                <h2 className="font-bold text-zinc-950 text-base">업무 시간</h2>
               </div>
               <div className="text-sm text-zinc-600 space-y-1 leading-relaxed">
                 <p><span className="font-bold text-zinc-800">평일:</span> 09:00 ~ 18:00 <span className="text-zinc-400 pl-1.5">(점심시간: 12:00 ~ 13:00)</span></p>
@@ -90,7 +90,7 @@ const Contact = () => {
             <div className="bg-white p-5 sm:p-6 rounded-xl shadow-xs border border-zinc-200/80 hover:border-emerald-200 transition-colors [word-break:keep-all]">
               <div className="flex items-center gap-2 mb-2.5 text-emerald-700">
                 <span className="material-symbols-outlined text-xl">contact_support</span>
-                <h3 className="font-bold text-zinc-950 text-base">문의 및 견적</h3>
+                <h2 className="font-bold text-zinc-950 text-base">문의 및 견적</h2>
               </div>
               <div className="space-y-2 text-sm text-zinc-600 leading-relaxed">
                 <p>
@@ -118,7 +118,7 @@ const Contact = () => {
         
         {/* 관리자 페이지 접속 (숨김 링크) */}
         <div className="text-center mt-12">
-          <a href="/sd-master" className="text-[10px] text-zinc-300 hover:text-zinc-400 opacity-30 transition-opacity">
+          <a href="/sd-master" rel="nofollow" className="text-[10px] text-zinc-300 hover:text-zinc-400 opacity-30 transition-opacity">
             Admin Portal
           </a>
         </div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { CardSlider, type DeckCard } from '../ui/card-slider';
 import { Buildings, CloudSun as Mountains, Sunset as SunHorizon, Leaf as Tree, Soundwave as Waves } from "@solar-icons/react";
 
@@ -47,7 +47,6 @@ const deckCards: DeckCard[] = [
 ];
 
 const Home: React.FC = () => {
-  const navigate = useNavigate();
   const heroRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -232,9 +231,9 @@ const Home: React.FC = () => {
             className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-6 pointer-events-none"
             style={{ opacity: 0, transform: 'translateY(30px)' }}
           >
-            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight tracking-tight mb-5 drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight tracking-tight mb-5 drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]">
               기획부터 디자인 그리고 인쇄까지.
-            </h2>
+            </h1>
             <p className="text-white/95 text-lg sm:text-xl md:text-2xl font-semibold tracking-wide max-w-2xl leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.85)]">
               보고서, 간행물, 홍보물 제작
             </p>
@@ -260,9 +259,9 @@ const Home: React.FC = () => {
       {/* 2. 소나무디자인 포트폴리오 (Card Slider) */}
       <div className="w-full bg-zinc-950 py-28 overflow-hidden text-center">
         <div className="mb-14">
-          <h3 className="text-3xl md:text-5xl font-black text-white mb-4">
+          <h2 className="text-3xl md:text-5xl font-black text-white mb-4">
             소나무디자인 포트폴리오
-          </h3>
+          </h2>
           <p className="text-zinc-400 text-base md:text-lg max-w-xl mx-auto px-4">
             공공기관 및 기업 납품 사례
           </p>
@@ -272,13 +271,13 @@ const Home: React.FC = () => {
           <CardSlider cards={deckCards} label="PORTFOLIO" />
         </div>
 
-        <button 
-          onClick={() => navigate('/portfolio')}
+        <Link 
+          to="/portfolio"
           className="px-8 py-4 bg-white hover:bg-gray-100 text-navy-900 rounded-full font-bold transition-all inline-flex items-center gap-2 shadow-xl hover:-translate-y-0.5 cursor-pointer"
         >
           <span>전체 포트폴리오 보러가기</span>
           <span className="material-symbols-outlined text-lg">arrow_forward</span>
-        </button>
+        </Link>
       </div>
 
     </section>

@@ -9,6 +9,45 @@ function App() {
   useEffect(() => {
     // Scroll to top on route change
     window.scrollTo(0, 0);
+
+    const routeMeta: Record<string, { title: string; description: string; canonical: string }> = {
+      '/': {
+        title: '소나무디자인 | 인천 공공기관·기업 인쇄 및 보고서·백서 제작',
+        description: '인천 공공기관 및 기업 인쇄 제작 파트너. 사업보고서, 백서, 정책 리플렛, 소식지 등 공공 간행물 기획·편집 디자인 및 사내 직접 인쇄.',
+        canonical: 'https://sonamudesign.com/'
+      },
+      '/portfolio': {
+        title: '포트폴리오 | 소나무디자인 - 공공기관·기업 인쇄 및 간행물 납품 사례',
+        description: '소나무디자인의 공공기관 및 기업 인쇄 납품 사례. 도서·출판, 사업보고서, 리플렛·포스터, 대형 실사출력, 판촉물 포트폴리오를 확인하세요.',
+        canonical: 'https://sonamudesign.com/portfolio'
+      },
+      '/contact': {
+        title: '오시는 길 및 문의 | 소나무디자인 - 인천 미추홀구 인쇄·디자인',
+        description: '인천광역시 미추홀구 인주대로 304 영인빌딩 4층 소나무디자인 오시는 길, 무료 주차 안내 및 인쇄·간행물 견적 문의(032-465-8195).',
+        canonical: 'https://sonamudesign.com/contact'
+      }
+    };
+
+    const meta = routeMeta[location.pathname] || {
+      title: '소나무디자인 | 인천 공공기관·기업 인쇄 및 보고서·백서 제작',
+      description: '인천 공공기관 및 기업 인쇄 제작 파트너. 사업보고서, 백서, 정책 리플렛, 소식지 등 공공 간행물 기획·편집 디자인 및 사내 직접 인쇄.',
+      canonical: `https://sonamudesign.com${location.pathname === '/' ? '/' : location.pathname}`
+    };
+
+    document.title = meta.title;
+
+    const setMeta = (selector: string, attr: string, value: string) => {
+      const el = document.querySelector(selector);
+      if (el) el.setAttribute(attr, value);
+    };
+
+    setMeta('meta[name="description"]', 'content', meta.description);
+    setMeta('link[rel="canonical"]', 'href', meta.canonical);
+    setMeta('meta[property="og:url"]', 'content', meta.canonical);
+    setMeta('meta[property="og:title"]', 'content', meta.title);
+    setMeta('meta[property="og:description"]', 'content', meta.description);
+    setMeta('meta[name="twitter:title"]', 'content', meta.title);
+    setMeta('meta[name="twitter:description"]', 'content', meta.description);
   }, [location.pathname]);
 
   useEffect(() => {
