@@ -22,3 +22,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Temporary scratch & test scripts
+scratch/
+scratch.js
+setup_aws.mjs
+upload_ebook.mjs
+test-*.js
+temp.html
+out.txt
+*.env
+*.env.*
+!.env.example

@@ -1,10 +1,40 @@
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { createClient } from '@supabase/supabase-js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.statusCode = 405;
+    res.setHeader('Content-Type', 'application/json');
     return res.end(JSON.stringify({ error: 'Method not allowed' }));
+  }
+
+  // 1. Supabase 관리자 인증 토큰 검증
+  const authHeader = req.headers.authorization || req.headers.Authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    res.statusCode = 401;
+    res.setHeader('Content-Type', 'application/json');
+    return res.end(JSON.stringify({ error: '인증 토큰이 필요합니다. (Unauthorized)' }));
+  }
+
+  const token = authHeader.split(' ')[1];
+  const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
+  const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
+
+  if (supabaseUrl && supabaseAnonKey) {
+    try {
+      const supabase = createClient(supabaseUrl, supabaseAnonKey);
+      const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+      if (authError || !user) {
+        res.statusCode = 403;
+        res.setHeader('Content-Type', 'application/json');
+        return res.end(JSON.stringify({ error: '관리자 권한이 유효하지 않습니다. (Forbidden)' }));
+      }
+    } catch (e) {
+      res.statusCode = 403;
+      res.setHeader('Content-Type', 'application/json');
+      return res.end(JSON.stringify({ error: '인증 검증 중 오류가 발생했습니다.' }));
+    }
   }
 
   try {
@@ -17,7 +47,29 @@ export default async function handler(req, res) {
        body = JSON.parse(Buffer.concat(buffers).toString());
     }
 
-    const { files, folderId } = body; 
+    const { files, folderId } = body || {}; 
+
+    // 2. strict folderId validation
+    if (!folderId || typeof folderId !== 'string' || !/^[a-zA-Z0-9_-]+$/.test(folderId)) {
+      res.statusCode = 400;
+      res.setHeader('Content-Type', 'application/json');
+      return res.end(JSON.stringify({ error: '유효한 folderId가 필요합니다.' }));
+    }
+
+    // 3. files 배열 검증 및 경로 이탈(Path Traversal) 방지
+    if (!Array.isArray(files) || files.length === 0) {
+      res.statusCode = 400;
+      res.setHeader('Content-Type', 'application/json');
+      return res.end(JSON.stringify({ error: 'files 목록이 비어있습니다.' }));
+    }
+
+    for (const f of files) {
+      if (!f.path || typeof f.path !== 'string' || f.path.includes('..') || f.path.startsWith('/')) {
+        res.statusCode = 400;
+        res.setHeader('Content-Type', 'application/json');
+        return res.end(JSON.stringify({ error: `안전하지 않은 파일 경로입니다: ${f.path}` }));
+      }
+    } 
 
     let region = process.env.AWS_REGION || process.env.VITE_AWS_REGION;
     // Vercel에서 AWS_REGION 환경변수를 지웠거나 누락한 경우, Vercel 시스템의 기본 리전(us-east-1)이 들어오게 됩니다.

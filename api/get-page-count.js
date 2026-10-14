@@ -6,13 +6,43 @@ export default async function handler(req, res) {
 
   try {
     const { configUrl } = req.query;
-    if (!configUrl) {
-      throw new Error('configUrl is required');
+    if (!configUrl || typeof configUrl !== 'string') {
+      res.statusCode = 400;
+      res.setHeader('Content-Type', 'application/json');
+      return res.end(JSON.stringify({ error: 'configUrl 파라미터가 필요합니다.' }));
+    }
+
+    // SSRF 방어: URL 파싱 및 허용 도메인 화이트리스트 검증
+    let parsedUrl;
+    try {
+      parsedUrl = new URL(configUrl);
+    } catch {
+      res.statusCode = 400;
+      res.setHeader('Content-Type', 'application/json');
+      return res.end(JSON.stringify({ error: '유효한 URL 형식이 아닙니다.' }));
+    }
+
+    if (parsedUrl.protocol !== 'https:') {
+      res.statusCode = 400;
+      res.setHeader('Content-Type', 'application/json');
+      return res.end(JSON.stringify({ error: '보안을 위해 HTTPS URL만 허용됩니다.' }));
+    }
+
+    // AWS S3, CloudFront, Supabase 스토리지 도메인만 허용
+    const isAllowedHost = 
+      parsedUrl.hostname.endsWith('.amazonaws.com') ||
+      parsedUrl.hostname.endsWith('.cloudfront.net') ||
+      parsedUrl.hostname.endsWith('.supabase.co');
+
+    if (!isAllowedHost) {
+      res.statusCode = 403;
+      res.setHeader('Content-Type', 'application/json');
+      return res.end(JSON.stringify({ error: '허용되지 않은 호스트 주소입니다.' }));
     }
 
     const fetchRes = await fetch(configUrl);
     if (!fetchRes.ok) {
-      throw new Error(`Failed to fetch config from S3: ${fetchRes.statusText}`);
+      throw new Error(`Failed to fetch config: ${fetchRes.statusText}`);
     }
 
     const text = await fetchRes.text();

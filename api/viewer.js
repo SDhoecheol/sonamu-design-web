@@ -33,24 +33,42 @@ export default async function handler(req, res) {
     }
   }
 
-  // 1. 현재 접속된 도메인 알아내기
-  const protocol = req.headers['x-forwarded-proto'] || 'https';
-  const host = req.headers.host;
-  const baseUrl = `${protocol}://${host}`;
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  // 1. 도메인 화이트리스트 및 안전한 baseUrl 설정 (Host Header Injection 방지)
+  const host = (req.headers.host || '').toLowerCase();
+  let baseUrl = 'https://www.sonamudesign.com';
+  if (host.startsWith('localhost') || host.startsWith('127.0.0.1')) {
+    baseUrl = `http://${host}`;
+  } else if (host.endsWith('sonamudesign.com') || host.endsWith('.vercel.app')) {
+    baseUrl = `https://${host}`;
+  }
+
+  const safeTitle = escapeHtml(ogTitle);
+  const safeDesc = escapeHtml(ogDescription);
+  const safeImage = escapeHtml(ogImage);
+  const safeId = escapeHtml(id);
 
   try {
     // 2. Vercel 정적 호스팅된 원본 HTML(index.html) 가져오기
-    // baseUrl('/')을 호출하면 원본 index.html 문자열을 얻을 수 있습니다.
     const response = await fetch(`${baseUrl}/`);
     let html = await response.text();
 
-    // 3. 로드한 원본 HTML에 메타 태그 교체 및 주입
+    // 3. 로드한 원본 HTML에 메타 태그 교체 및 주입 (이스케이프 적용)
     const ogTags = `
-    <meta property="og:title" content="${ogTitle}" />
-    <meta property="og:description" content="${ogDescription}" />
-    <meta property="og:image" content="${ogImage}" />
+    <meta property="og:title" content="${safeTitle}" />
+    <meta property="og:description" content="${safeDesc}" />
+    <meta property="og:image" content="${safeImage}" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="${baseUrl}/viewer/${id}" />`;
+    <meta property="og:url" content="${baseUrl}/viewer/${safeId}" />`;
     
     // 기본적으로 있던 og: 태그들을 삭제 (중복 방지)
     html = html.replace(/<meta property="og:.*?" content=".*?" \/>/g, '');
@@ -59,7 +77,7 @@ export default async function handler(req, res) {
     html = html.replace('<head>', `<head>\n${ogTags}`);
     
     // 브라우저 탭 타이틀 교체
-    html = html.replace(/<title>.*?<\/title>/, `<title>${ogTitle}</title>`);
+    html = html.replace(/<title>.*?<\/title>/, `<title>${safeTitle}</title>`);
 
     // 4. 완성된 HTML을 클라이언트(카카오톡 로봇 포함)에게 반환
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -72,10 +90,10 @@ export default async function handler(req, res) {
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <title>${ogTitle}</title>
-    <meta property="og:title" content="${ogTitle}" />
-    <meta property="og:description" content="${ogDescription}" />
-    <meta property="og:image" content="${ogImage}" />
+    <title>${safeTitle}</title>
+    <meta property="og:title" content="${safeTitle}" />
+    <meta property="og:description" content="${safeDesc}" />
+    <meta property="og:image" content="${safeImage}" />
     <meta http-equiv="refresh" content="0; url=/" />
   </head>
   <body></body>

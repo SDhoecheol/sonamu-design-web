@@ -53,9 +53,15 @@ export default function EbookManager() {
         
         if (folderId && folderId.startsWith('ebook_')) {
           setDeleteStatus('S3 스토리지의 모든 파일(이미지, 스크립트)을 파기하는 중입니다. (약 5~10초 소요)');
+          const { data: authData } = await supabase.auth.getSession();
+          const authToken = authData.session?.access_token;
+
           const deleteRes = await fetch('/api/s3-delete', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {})
+            },
             body: JSON.stringify({ folderId })
           });
 
@@ -175,6 +181,9 @@ export default function EbookManager() {
         // 대량 파일 업로드 시 Vercel 10초 타임아웃을 방지하기 위해 100개씩 청크 분할
         const CHUNK_SIZE = 100;
         const presignData: { urls: any[] } = { urls: [] };
+
+        const { data: authData } = await supabase.auth.getSession();
+        const authToken = authData.session?.access_token;
         
         for (let i = 0; i < filePayloads.length; i += CHUNK_SIZE) {
           const chunk = filePayloads.slice(i, i + CHUNK_SIZE);
@@ -184,7 +193,10 @@ export default function EbookManager() {
           try {
             presignResponse = await fetch('/api/s3-presign', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: {
+                'Content-Type': 'application/json',
+                ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {})
+              },
               body: JSON.stringify({ files: chunk, folderId })
             });
           } catch (e: any) {
