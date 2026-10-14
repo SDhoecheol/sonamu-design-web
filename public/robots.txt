@@ -4,4 +4,5 @@ Disallow: /sd-master/
 Disallow: /admin/
 Disallow: /api/
 
+Sitemap: https://www.sonamudesign.com/sitemap.xml
 Sitemap: https://sonamudesign.com/sitemap.xml
